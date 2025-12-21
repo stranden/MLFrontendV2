@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import Navbar from '@/components/Navbar.vue'
 
 // Reactive data
-const welcomeMessage = ref('Welcome to Our Application')
+const welcomeMessage = ref('Welcome to ML Frontend')
+const welcomeSubMessage = ref('Your one-stop solution for broadcast graphics')
 const features = ref([
   {
     id: 1,
@@ -40,6 +42,9 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <!-- Navigation -->
+    <Navbar />
+
     <!-- Hero Section -->
     <div class="container mx-auto px-4 py-12">
       <div class="text-center mb-16">
@@ -49,19 +54,12 @@ onMounted(() => {
             isLoaded ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'
           "
         >
-          <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+          <h1 class="text-3xl md:text-6xl font-bold text-gray-800 mb-6">
             {{ welcomeMessage }}
           </h1>
           <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Experience the power of modern web development with Vue 3, Composition API, and
-            TailwindCSS.
+            {{ welcomeSubMessage }}
           </p>
-          <button
-            @click="handleGetStarted"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            Get Started
-          </button>
         </div>
       </div>
 

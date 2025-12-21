@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/views/Home.vue'
+import About from '@/views/About.vue'
 //import Scoreboard from '@/views/Scoreboard.vue'
 //import Leaderboard from '@/views/Leaderboard.vue'
 //import Final from '@/views/Final.vue'
@@ -10,6 +11,7 @@ import Home from '@/views/Home.vue'
 
 const routes = [
   { path: '/', component: Home },
+  { path: '/about', component: About },
   //{ path: '/scoreboard', component: Scoreboard },
   //{ path: '/leaderboard', component: Leaderboard },
   //{ path: '/final', component: IndvidualFinal },
