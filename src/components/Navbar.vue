@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeSwitcher from './ThemeSwitcher.vue'
+import Logo from './Logo.vue'
 
 // Vue Router composables
 const route = useRoute()
@@ -22,19 +23,25 @@ const isActive = (href) => {
 
 <template>
   <div class="navbar bg-base-100 shadow-sm">
-    <a class="btn btn-ghost text-xl">ML Frontend</a>
-    <div class="flex-1"></div>
-    <div class="menu menu-horizontal px-1">
-      <a
-        v-for="item in navItems"
-        :key="item.name"
-        :href="item.href"
-        :class="['btn btn-ghost', isActive(item.href) ? 'btn-active' : '']"
-      >
-        {{ item.name }}
-      </a>
-      <!-- Theme switcher -->
-      <ThemeSwitcher />
+    <div class="flex-1">
+      <router-link to="/" class="btn btn-ghost normal-case text-xl">
+        <Logo class="w-8 h-8 mr-1" />
+        MLFrontend
+      </router-link>
+    </div>
+    <div class="flex-none">
+      <div class="menu menu-horizontal">
+        <router-link
+          v-for="item in navItems"
+          :key="item.name"
+          :to="item.href"
+          :class="['btn btn-ghost', isActive(item.href) ? 'btn-active' : '']"
+        >
+          {{ item.name }}
+        </router-link>
+        <!-- Theme switcher -->
+        <ThemeSwitcher />
+      </div>
     </div>
   </div>
 </template>
