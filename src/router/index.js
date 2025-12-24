@@ -5,16 +5,15 @@ import WebLayout from '@/layouts/WebLayout.vue'
 import BroadcastLayout from '@/layouts/BroadcastLayout.vue'
 
 // Web views
-import Home from '@/views/web/Home.vue'
-import About from '@/views/web/About.vue'
+const Home = () => import('@/views/web/Home.vue')
+const About = () => import('@/views/web/About.vue')
 
 // Broadcast views
-//import Scoreboard from '@/views/broadcast/Scoreboard.vue'
-//import Leaderboard from '@/views/broadcast/Leaderboard.vue'
-//import Final from '@/views/broadcast/Final.vue'
-//import IndvidualFinal from '@/views/broadcast/IndividualFinal.vue'
-//import MixedFinal from '@/views/broadcast/MixedFinal.vue'
-//import ShootingTimer from '@/views/broadcast/ShootingTimer.vue'
+const ShootingTimer = () => import('@/views/broadcast/ShootingTimer.vue')
+const IndividualFinal10m = () => import('@/views/broadcast/10m/individual/IndividualFinal.vue')
+const Scoreboard10m = () => import('@/views/broadcast/10m/individual/Scoreboard.vue')
+const MixedFinal10m = () => import('@/views/broadcast/10m/mixed/MixedFinal.vue')
+const TeamFinal10m = () => import('@/views/broadcast/10m/team/TeamFinal.vue')
 
 // Web routes
 const webroutes = [
@@ -24,12 +23,11 @@ const webroutes = [
 
 // Broadcast routes
 const broadcastRoutes = [
-  //{ path: 'scoreboard', component: Scoreboard },
-  //{ path: 'leaderboard', component: Leaderboard },
-  //{ path: 'final', component: IndvidualFinal },
-  //{ path: 'finaltest', component: Final },
-  //{ path: 'mixed', component: MixedFinal },
-  //{ path: 'shootingtimer', component: ShootingTimer },
+  { path: 'shootingtimer', component: ShootingTimer },
+  { path: '10m/individual', component: IndividualFinal10m },
+  { path: '10m/individual/scoreboard', component: Scoreboard10m },
+  { path: '10m/mixed', component: MixedFinal10m },
+  { path: '10m/team', component: TeamFinal10m },
 ]
 
 // Layout based routes
