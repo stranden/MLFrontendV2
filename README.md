@@ -1,85 +1,76 @@
 # Megalink Frontend V2
 
-Megalink frontend for broadcast graphics - A modern Vue.js application designed for shooting sports broadcast and web interfaces.
+Megalink frontend for broadcast graphics – a modern Vue.js application for shooting sports broadcasts and web interfaces.
 
-## Project Overview
+## Features
 
-This project is split into **two main parts**:
-
-### 🎥 Broadcast Part
-
-- **Purpose**: Real-time graphics and scoreboards for live broadcasting
-- **Features**: Timer displays, individual/team/mixed final scoreboards for 10m shooting competitions
-- **Location**: `/src/views/broadcast/`
-- **Layout**: Uses `BroadcastLayout.vue` for broadcast-optimized UI
-
-### 🌐 Web Part
-
-- **Purpose**: Public-facing web interface for general users
-- **Features**: Home page, about information, and general navigation
-- **Location**: `/src/views/web/`
-- **Layout**: Uses `WebLayout.vue` for standard web experience
-
-## 🚧 Development Status
-
-**Note**: This project is in early development stage. Much of the functionality is still being implemented.
-
-## Tech Stack
-
-- **Framework**: Vue 3 with Composition API
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS + DaisyUI
-- **Routing**: Vue Router
-- **State Management**: Vue Composables
-- **Real-time**: Socket.js service integration
+- Real-time graphics and scoreboards for live broadcasting (10m shooting competitions)
+- Timer displays
+- Individual, team, and mixed finals support
+- Broadcast-optimized and public web layouts
+- Responsive design
+- Real-time updates via socket service
 
 ## Project Structure
 
 ```
 src/
-├── components/          # Reusable UI components
-├── composables/         # Vue composition functions
-├── layouts/            # Layout components (Broadcast/Web)
+├── assets/        # Images, static media, CSS, flags, etc.
+├── components/    # Reusable Vue components (buttons, timers, scorecards, etc.)
+├── composables/   # Vue 3 composition API logic (hooks, utilities)
+├── layouts/       # High-level UI layouts (BroadcastLayout.vue, WebLayout.vue)
+├── router/        # Vue Router configuration (index.js, routes)
+├── services/      # API clients (REST, socket services, etc.)
 ├── views/
-│   ├── broadcast/      # Broadcast graphics views
-│   │   └── 10m/        # 10m shooting competition views
-│   └── web/           # Public web interface views
-├── services/          # API and Socket services
-├── router/            # Vue Router configuration
-└── assets/            # Static assets (CSS, images, flags)
+│   ├── broadcast/ # Broadcast-focused views (scoreboards, graphics)
+│   │   └── 10m/   # Views for 10m shooting competitions
+│   └── web/       # Web interface views (public pages, info)
 ```
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Framework:** Vue 3 (Composition API)
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS, DaisyUI
+- **Routing:** Vue Router
+- **State Management:** Vue Composables
+- **Real-time:** Socket.js service
 
-## Recommended Browser Setup
+## Setup & Development
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/) for customization options.
-
-## Project Setup
+Install dependencies:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Start a development server with hot reload:
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+Build for production:
 
 ```sh
 npm run build
 ```
+
+Preview the built project:
+
+```sh
+npm run preview
+```
+
+## Configuration
+
+For advanced customization see the [Vite Configuration Reference](https://vite.dev/config/).
+
+## Recommended Tools
+
+- **IDE:** Visual Studio Code with the [Vue Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) extension
+- **Devtools:** Vue.js Devtools for Chrome or Firefox
+
+## Contributing
+
+Contributions and feedback are welcome! Please open issues or pull requests.
