@@ -1,15 +1,106 @@
 <script setup>
-// Sample data for 8 shooters
-const shooters = [
-  { rank: 1, name: 'HANSEN', country: 'DEN', score: 249.8, active: false },
-  { rank: 2, name: 'SMITH', country: 'USA', score: 249.1, active: false },
-  { rank: 3, name: 'MÜLLER', country: 'GER', score: 248.7, active: false },
-  { rank: 4, name: 'LÓPEZ', country: 'ESP', score: 247.9, active: false },
-  { rank: 5, name: 'CHEN', country: 'CHN', score: 247.3, active: false },
-  { rank: 6, name: 'ROSSI', country: 'ITA', score: 246.8, active: false },
-  { rank: 7, name: 'DUBOIS', country: 'FRA', score: 246.2, active: false },
-  { rank: 8, name: 'YAMADA', country: 'JPN', score: 245.5, active: false },
-]
+import { computed } from 'vue'
+import { useLiveData } from '@/composables/useLiveData.js'
+import { formatName, svgSource, parseClubData } from '@/assets/js/util.js'
+import Target from '@/components/Target.vue'
+
+const { fetchedData } = useLiveData('fp')
+
+// Utility functions
+function extractShotsForShooter(shooter) {
+  return shooter?.shots?.map(({ x, y }) => ({ x, y })) || []
+}
+
+function getShooterClass(flags) {
+  return [
+    flags === 'E' &&
+      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
+    flags === 'ES' &&
+      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
+    flags === 'T' &&
+      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-green-700/50',
+    (flags === 'P' || flags === 'SP') &&
+      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-red-700/50',
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
+// Filtering functions
+function includeAllShooters(shooters) {
+  return shooters
+}
+function removeShootersWithFlags(shooters, flagKey, flagValues) {
+  const values = Array.isArray(flagValues) ? flagValues : [flagValues]
+  return shooters.filter((shooter) => !values.includes(shooter[flagKey]))
+}
+function includeShootersWithFlags(shooters, flagKey, flagValues) {
+  const values = Array.isArray(flagValues) ? flagValues : [flagValues]
+  return shooters.filter((shooter) => values.includes(shooter[flagKey]))
+}
+
+// Computed values
+const allShooters = computed(() => includeAllShooters(fetchedData.value))
+const activeShooters = computed(() =>
+  removeShootersWithFlags(fetchedData.value, 'flags', ['E', 'ES']),
+)
+const eliminatedShooters = computed(() =>
+  includeShootersWithFlags(fetchedData.value, 'flags', ['P', 'SP']),
+)
+
+const stageInfo = computed(() => {
+  const shooters = fetchedData.value
+  const active = activeShooters.value.length
+  const hasShootOff = shooters.some((s) => s.flags === 'T')
+  const hasPendingElimination = shooters.some((s) => ['P', 'SP'].includes(s.flags))
+  const seriesTypeShootoff = shooters.some((s) => s.seriesType === 'shootoff')
+  // Defensive: empty array fallback for Math.max
+  const matchShotCounts = shooters.map((p) => p.matchShotCount || 0)
+  const fiveShotsSeries = matchShotCounts.length && Math.max(...matchShotCounts) <= 10
+
+  const firstSingleShotSeries = active === 8 && !fiveShotsSeries
+  const secondSingleShotSeries = active === 7 && !seriesTypeShootoff
+  const thirdSingleShotSeries = active === 6 && !seriesTypeShootoff
+  const fourthSingleShotSeries = active === 5 && !seriesTypeShootoff
+  const fifthSingleShotSeries = active === 4 && !seriesTypeShootoff
+  const sixthSingleShotSeries = active === 3 && !seriesTypeShootoff
+  const seventhSingleShotSeries = active === 2 && !seriesTypeShootoff
+  const shootOffSeries = seriesTypeShootoff && hasShootOff
+
+  return {
+    fiveShotsSeries,
+    firstSingleShotSeries,
+    secondSingleShotSeries,
+    thirdSingleShotSeries,
+    fourthSingleShotSeries,
+    fifthSingleShotSeries,
+    sixthSingleShotSeries,
+    seventhSingleShotSeries,
+    shootOffSeries,
+    hasPendingElimination,
+    stage: fiveShotsSeries
+      ? 'series'
+      : firstSingleShotSeries
+        ? 'first-single-shot-series'
+        : secondSingleShotSeries
+          ? 'second-single-shot-series'
+          : thirdSingleShotSeries
+            ? 'third-single-shot-series'
+            : fourthSingleShotSeries
+              ? 'fourth-single-shot-series'
+              : fifthSingleShotSeries
+                ? 'fifth-single-shot-series'
+                : sixthSingleShotSeries
+                  ? 'sixth-single-shot-series'
+                  : seventhSingleShotSeries
+                    ? 'seventh-single-shot-series'
+                    : shootOffSeries
+                      ? 'series-shootoff'
+                      : hasPendingElimination
+                        ? 'presentation'
+                        : 'unknown',
+  }
+})
 </script>
 
 <template>
@@ -19,38 +110,85 @@ const shooters = [
     <div class="w-[90vw] flex flex-col gap-[1vh] items-center">
       <!-- 8 shooter boxes in a row -->
       <div class="w-full flex gap-[1vw] justify-around">
-        <div
-          v-for="shooter in shooters"
-          :key="shooter.rank"
-          :class="[
-            'flex-1 flex flex-col text-white rounded-lg py-[1vh] px-[0.5vw] transition-all duration-300',
-            shooter.active
-              ? 'bg-yellow-600 bg-opacity-90 transform scale-105'
-              : 'bg-black bg-opacity-80',
-          ]"
-        >
-          <!-- Rank -->
-          <div class="text-[1.2vw] font-bold text-gray-300">{{ shooter.rank }}</div>
-
-          <!-- Name -->
-          <div class="text-[1.5vw] font-bold text-center leading-tight">{{ shooter.name }}</div>
-
-          <!-- Country -->
-          <div class="text-[1vw] text-gray-300">{{ shooter.country }}</div>
-
-          <!-- Score -->
+        <div v-if="stageInfo.stage != 'unknown'">
           <div
-            :class="[
-              'text-[1.8vw] font-bold mt-[0.5vh]',
-              shooter.active ? 'text-black' : 'text-yellow-400',
-            ]"
-          >
-            {{ shooter.score }}
-          </div>
+            v-for="(data, index) in activeShooters"
+            :key="index"
+            class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out mb-0"
+            :class="getShooterClass(data.flags)"
+          ></div>
         </div>
       </div>
     </div>
   </div>
-</template>
+  <!--
+  <div
+    v-if="stageInfo.stage !== 'unknown'"
+    id="shootingDisplayContainer"
+    :class="`stage-${stageInfo.stage}`"
+    class="absolute left-[5vw] right-[5vw] bottom-[5vw] flex flex-wrap justify-center items-end transition-all duration-500 top-auto h-auto"
+  >
+    <div
+      v-for="(data, index) in activeShooters"
+      :key="index"
+      class="relative flex-1 rounded-lg bg-white/10 transition-all duration-300 mb-0"
+      :class="getShooterClass(data.flags)"
+    >
+      <Target
+        :target-name="data.targetId"
+        :shot-data="extractShotsForShooter(data)"
+        :flags="data.flags"
+      />
 
-<style scoped></style>
+      <div class="relative top-0 left-0 bg-gray-200/50 rounded-tr-lg opacity-50">
+        <div
+          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-6 font-bold italic text-xs"
+        >
+          SCORE
+        </div>
+      </div>
+
+      <div class="relative top-0 left-0 bg-blue-900/80 text-gray-400">
+        <div
+          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-10 font-bold text-xl"
+        >
+          {{ data.shots.length > 0 ? data.shots[data.shots.length - 1].vd : '0.0' }}
+        </div>
+      </div>
+
+      <div class="w-full bg-blue-900">
+        <div
+          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-10 font-bold text-xl text-gray-100"
+        >
+          {{ data.totalScore }}
+        </div>
+      </div>
+
+      <div class="w-full bg-gray-200">
+        <div
+          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-8 font-bold italic text-xs"
+        >
+          Total
+        </div>
+      </div>
+
+      <div class="w-full bg-blue-900 opacity-100">
+        <div class="flex items-center pl-2.5 h-10 font-bold text-lg text-gray-100">
+          {{ formatName(data.name) }}
+        </div>
+      </div>
+
+      <div class="w-full bg-gray-200 rounded-b-lg">
+        <div class="flex items-center pl-2.5 h-8 font-bold text-base">
+          <img
+            :src="svgSource(parseClubData(data.club).nation)"
+            alt="nation"
+            class="h-4 rounded-full"
+          />
+          <span class="font-bold text-base pl-2">{{ parseClubData(data.club).club }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+</template>
