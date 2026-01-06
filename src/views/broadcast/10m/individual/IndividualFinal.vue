@@ -25,7 +25,7 @@ function getShooterClass(flags) {
     .filter(Boolean)
     .join(' ')
 }
-
+  
 // Filtering functions
 function includeAllShooters(shooters) {
   return shooters
@@ -116,10 +116,12 @@ const stageInfo = computed(() => {
           class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vmax]"
           :class="getShooterClass(data.flags)"
         >
-          <!-- TARGET CORNER -->
-          <div
-            class="absolute -top-[1.5vh] -left-[1.5vmax] w-[3vmax] h-[3vmax] rounded-full bg-black/70 flex items-center justify-center text-white text-[1vmax] font-bold z-10 shadow-lg border-[0.15vmax] border-white/80"
-          ></div>
+          <!-- TARGET COMPONENT -->
+          <Target
+            :targetName="data.targetId"
+            :shotData="extractShotsForShooter(data)"
+            :flags="data.flags"
+          />
 
           <!-- SCORE TOP RIGHT -->
           <div
