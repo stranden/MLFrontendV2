@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useLiveData } from '@/composables/useLiveData.js'
-import { formatName, svgSource, parseClubData } from '@/assets/js/util.js'
+//import { formatName, svgSource, parseClubData } from '@/assets/js/util.js'
 import Target from '@/components/Target.vue'
 
 const { fetchedData } = useLiveData('fp')
@@ -107,21 +107,69 @@ const stageInfo = computed(() => {
   <!-- Bottom graphic container - anchored to bottom -->
   <div class="h-full flex justify-center items-end pb-[5vh]">
     <!-- Bottom graphic content area within TV safe area -->
-    <div class="w-[90vw] flex flex-col gap-[1vh] items-center">
-      <!-- 8 shooter boxes in a row -->
-      <div class="w-full flex gap-[1vw] justify-around">
-        <div v-if="stageInfo.stage != 'unknown'">
+    <div class="w-[90vw]">
+      <!-- Shooters row -->
+      <div v-if="stageInfo.stage != 'unknown'" class="flex gap-[1vw]">
+        <div
+          v-for="(data, index) in activeShooters"
+          :key="index"
+          class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vmax]"
+          :class="getShooterClass(data.flags)"
+        >
+          <!-- TARGET CORNER -->
           <div
-            v-for="(data, index) in activeShooters"
-            :key="index"
-            class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out mb-0"
-            :class="getShooterClass(data.flags)"
+            class="absolute -top-[1.5vh] -left-[1.5vmax] w-[3vmax] h-[3vmax] rounded-full bg-black/70 flex items-center justify-center text-white text-[1vmax] font-bold z-10 shadow-lg border-[0.15vmax] border-white/80"
           ></div>
+
+          <!-- SCORE TOP RIGHT -->
+          <div
+            class="absolute top-0 right-0 bg-gray-200/50 rounded-tr-lg px-1 py-[0.25vh] text-[0.8rem] font-bold italic flex justify-center items-center"
+          >
+            SCORE
+          </div>
+
+          <!-- SHOT VALUE -->
+          <div
+            class="bg-blue-900/80 text-gray-300 text-[1.5rem] font-bold h-[2.5vh] flex items-center justify-center mt-[3vh]"
+          >
+            10.4
+          </div>
+
+          <!-- TOTAL SCORE -->
+          <div
+            class="bg-blue-900 text-gray-100 text-[1.5rem] font-bold h-[2.5vh] flex items-center justify-center mt-[0.5vh]"
+          >
+            104.9
+          </div>
+
+          <div
+            class="bg-gray-200 text-[0.8rem] font-bold italic h-[2vh] flex items-center justify-center"
+          >
+            Total
+          </div>
+
+          <!-- NAME -->
+          <div
+            class="bg-blue-950 text-gray-100 text-[1.25rem] font-bold h-[2.5vh] flex items-center pl-[0.25vw]"
+          >
+            Henrik Strand
+          </div>
+
+          <!-- CLUB / NATION -->
+          <div class="bg-gray-200 rounded-b-lg h-[2vh] flex items-center pl-[0.25vw]">
+            <img
+              src="`@/assets/img/flags/DEN.svg`"
+              alt="nation"
+              class="h-[1.25rem] rounded-full"
+            /><span class="font-bold text-[1rem] pl-[0.25vw]">DEN</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <!--
+</template>
+
+<!--
   <div
     v-if="stageInfo.stage !== 'unknown'"
     id="shootingDisplayContainer"
@@ -191,4 +239,3 @@ const stageInfo = computed(() => {
     </div>
   </div>
   -->
-</template>
