@@ -25,7 +25,7 @@ function getShooterClass(flags) {
     .filter(Boolean)
     .join(' ')
 }
-  
+
 // Filtering functions
 function includeAllShooters(shooters) {
   return shooters
@@ -125,25 +125,37 @@ const stageInfo = computed(() => {
 
           <!-- SCORE TOP RIGHT -->
           <div class="relative bg-gray-200/50 text-gray-300 rounded-tr-lg">
-            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[1.5vh] flex justify-center items-center text-[0.7rem] font-semibold italic">SCORE</div>
+            <div
+              class="relative left-[4vw] w-[calc(100%-4vw)] h-[1.5vh] flex justify-center items-center text-[0.7rem] font-semibold italic"
+            >
+              SCORE
+            </div>
           </div>
 
           <!-- SHOT VALUE -->
           <div class="relative bg-blue-900/80 text-gray-300">
-            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold">
+            <div
+              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold"
+            >
               {{ data.shots.length > 0 ? data.shots[data.shots.length - 1].vd : '0.0' }}
             </div>
           </div>
-          
+
           <!-- TOTAL SCORE -->
           <div class="relative bg-blue-900 text-gray-100">
-            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold">
+            <div
+              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold"
+            >
               {{ data.totalScore }}
             </div>
           </div>
 
           <div class="relative bg-gray-200/75 text-gray-900">
-            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2vh] flex justify-center items-center text-[0.8rem] font-semibold italic">Total</div>
+            <div
+              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2vh] flex justify-center items-center text-[0.8rem] font-semibold italic"
+            >
+              Total
+            </div>
           </div>
 
           <!-- NAME -->
@@ -157,7 +169,9 @@ const stageInfo = computed(() => {
               src="`@/assets/img/flags/4x3/dk.svg`"
               alt="nation"
               class="h-[full] rounded-bl-lg"
-            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">DEN</span>
+            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900"
+              >DEN</span
+            >
           </div>
         </div>
       </div>
