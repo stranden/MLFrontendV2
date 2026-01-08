@@ -113,7 +113,7 @@ const stageInfo = computed(() => {
         <div
           v-for="(data, index) in activeShooters"
           :key="index"
-          class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vmax]"
+          class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vw]"
           :class="getShooterClass(data.flags)"
         >
           <!-- TARGET COMPONENT -->
@@ -124,46 +124,40 @@ const stageInfo = computed(() => {
           />
 
           <!-- SCORE TOP RIGHT -->
-          <div
-            class="absolute top-0 right-0 bg-gray-200/50 rounded-tr-lg px-1 py-[0.25vh] text-[0.8rem] font-bold italic flex justify-center items-center"
-          >
-            SCORE
+          <div class="relative bg-gray-200/50 text-gray-300 rounded-tr-lg">
+            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[1.5vh] flex justify-center items-center text-[0.7rem] font-semibold italic">SCORE</div>
           </div>
 
           <!-- SHOT VALUE -->
-          <div
-            class="bg-blue-900/80 text-gray-300 text-[1.5rem] font-bold h-[2.5vh] flex items-center justify-center mt-[3vh]"
-          >
-            10.4
+          <div class="relative bg-blue-900/80 text-gray-300">
+            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold">
+              {{ data.shots.length > 0 ? data.shots[data.shots.length - 1].vd : '0.0' }}
+            </div>
           </div>
-
+          
           <!-- TOTAL SCORE -->
-          <div
-            class="bg-blue-900 text-gray-100 text-[1.5rem] font-bold h-[2.5vh] flex items-center justify-center mt-[0.5vh]"
-          >
-            104.9
+          <div class="relative bg-blue-900 text-gray-100">
+            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold">
+              {{ data.totalScore }}
+            </div>
           </div>
 
-          <div
-            class="bg-gray-200 text-[0.8rem] font-bold italic h-[2vh] flex items-center justify-center"
-          >
-            Total
+          <div class="relative bg-gray-200/75 text-gray-900">
+            <div class="relative left-[4vw] w-[calc(100%-4vw)] h-[2vh] flex justify-center items-center text-[0.8rem] font-semibold italic">Total</div>
           </div>
 
           <!-- NAME -->
-          <div
-            class="bg-blue-950 text-gray-100 text-[1.25rem] font-bold h-[2.5vh] flex items-center pl-[0.25vw]"
-          >
-            Henrik Strand
+          <div class="bg-blue-950/100 text-gray-100">
+            <div class="flex items-center pl-[0.25vw] font-bold h-[2.5vh]">Henrik Strand</div>
           </div>
 
           <!-- CLUB / NATION -->
-          <div class="bg-gray-200 rounded-b-lg h-[2vh] flex items-center pl-[0.25vw]">
+          <div class="bg-gray-200 rounded-b-lg h-[2vh] flex">
             <img
-              src="`@/assets/img/flags/DEN.svg`"
+              src="`@/assets/img/flags/4x3/dk.svg`"
               alt="nation"
-              class="h-[1.25rem] rounded-full"
-            /><span class="font-bold text-[1rem] pl-[0.25vw]">DEN</span>
+              class="h-[full] rounded-bl-lg"
+            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">DEN</span>
           </div>
         </div>
       </div>
