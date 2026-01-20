@@ -118,7 +118,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
 
             <!-- Name + Nation -->
             <div
-              class="flex items-center rounded-[1.5vmin] bg-[#00004b] text-[#888] h-[3vmin] gap-[1vmin]"
+              class="flex items-center rounded-[1.5vmin] bg-[#00004b] text-[#888] h-[3vmin] gap-[1.5vmin]"
             >
               <img
                 src="`@/assets/img/flags/4x3/dk.svg`"
