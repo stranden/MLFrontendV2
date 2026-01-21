@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLiveData } from '@/composables/useLiveData.js'
 
+import * as utils from '@/utils'
+
 const { fetchedData } = useLiveData('fp')
 const route = useRoute() // <-- This is now your source of truth
 
@@ -121,13 +123,18 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
               class="flex items-center rounded-[1.5vmin] bg-[#00004b] text-[#888] h-[3vmin] gap-[1.5vmin]"
             >
               <img
-                src="`@/assets/img/flags/4x3/dk.svg`"
+                :src="`${utils.countryFlag(
+                  utils.convertIocToAlpha2(utils.parseClubData(participant.club).nation),
+                  '4x3',
+                )}`"
                 alt="nation"
                 class="rounded-l-[1.5vmin] h-[3vmin]"
               />
 
               <!--<span class="h-[3vmin] w-[3vmin] rounded-[25%]">{{ participant.club }}</span>-->
-              <span class="font-bold text-[2vmin] flex">{{ participant.name }}</span>
+              <span class="font-bold text-[2vmin] flex">{{
+                utils.formatName(participant.name)
+              }}</span>
             </div>
 
             <!-- Total Score -->

@@ -1,8 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useLiveData } from '@/composables/useLiveData.js'
-//import { formatName, svgSource, parseClubData } from '@/assets/js/util.js'
 import Target from '@/components/Target.vue'
+
+import * as utils from '@/utils'
 
 const { fetchedData } = useLiveData('fp')
 
@@ -160,18 +161,25 @@ const stageInfo = computed(() => {
 
           <!-- NAME -->
           <div class="bg-blue-950/100 text-gray-100">
-            <div class="flex items-center pl-[0.25vw] font-bold h-[2.5vh]">Henrik Strand</div>
+            <div class="flex items-center pl-[0.25vw] font-bold h-[2.5vh]">
+              {{ utils.formatName(data.name) }}
+            </div>
           </div>
 
           <!-- CLUB / NATION -->
           <div class="bg-gray-200 rounded-b-lg h-[2vh] flex">
             <img
-              src="`@/assets/img/flags/4x3/dk.svg`"
+              :src="
+                utils.countryFlag(
+                  utils.convertIocToAlpha2(utils.parseClubData(data.club).nation),
+                  '4x3',
+                )
+              "
               alt="nation"
               class="h-[full] rounded-bl-lg"
-            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900"
-              >DEN</span
-            >
+            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">{{
+              utils.parseClubData(data.club).club
+            }}</span>
           </div>
         </div>
       </div>
