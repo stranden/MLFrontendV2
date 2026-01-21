@@ -8,8 +8,7 @@ import * as utils from '@/utils'
 const { fetchedData } = useLiveData('fp')
 const route = useRoute() // <-- This is now your source of truth
 
-// Sorted participants computed property
-const sortedParticipants = computed(() => {
+const participantsWithNotes = computed(() => {
   if (!fetchedData.value) return []
 
   // Step 1: Sort participants by totalScore descending, SP shooters last on ties
@@ -17,32 +16,64 @@ const sortedParticipants = computed(() => {
     const scoreDiff = parseFloat(b.totalScore) - parseFloat(a.totalScore)
     if (scoreDiff !== 0) return scoreDiff
 
-    // SP prioritization: non-SP first
     if (a.flags.includes('SP') && !b.flags.includes('SP')) return 1
     if (!a.flags.includes('SP') && b.flags.includes('SP')) return -1
     return 0
   })
 
-  // Step 2: Assign ranks, handling gold/silver tiebreaker
+  // Step 2: Assign ranks
   let rank = 1
   for (let i = 0; i < participants.length; i++) {
     if (i > 0 && participants[i].totalScore === participants[i - 1].totalScore) {
       participants[i].rank = participants[i - 1].rank
-
-      // Gold/Silver tiebreaker: Assign rank 2 to SP shooter if tied for 1st
       if (participants[i - 1].rank === 1 && participants[i].flags.includes('SP')) {
         participants[i].rank = 2
       }
     } else {
       participants[i].rank = rank
     }
-
-    // Update next rank
     rank = participants[i].rank + 1
   }
 
-  console.log('[Scoreboard] Logging output from sortedParticipants: ', participants)
-  return participants
+  // Step 3: Calculate remaining shooters (for gold determination)
+  const remainingShooters = participants.filter(
+    (p) =>
+      !(p.flags || []).includes('E') &&
+      !(p.flags || []).includes('ES') &&
+      !(p.flags || []).includes('P'),
+  )
+
+  // Step 4: Assign notes to each participant
+  const result = participants.map((participant, index) => {
+    const flags = participant.flags || []
+    let notes = { type: 'none' }
+
+    if (remainingShooters.length === 1 && remainingShooters[0] === participant) {
+      notes = { type: 'medal', medal: 'gold', rank: 1, text: 'GOLD' }
+    } else if (flags.includes('E') || flags.includes('ES') || flags.includes('P')) {
+      if (participant.rank === 2) {
+        notes = { type: 'medal', medal: 'silver', rank: 2, text: 'SILVER' }
+      } else if (participant.rank === 3) {
+        notes = { type: 'medal', medal: 'bronze', rank: 3, text: 'BRONZE' }
+      } else {
+        notes = { type: 'medal', medal: 'place', rank: participant.rank, text: 'PLACE' }
+      }
+    } else if (flags.includes('T')) {
+      notes = { type: 'shootoff', text: 'SHOOT OFF' }
+    } else if (index > 0) {
+      const currentScore = parseFloat(participant.totalScore)
+      const aboveScore = parseFloat(participants[index - 1].totalScore)
+      if (currentScore !== aboveScore) {
+        notes = { type: 'difference', text: (aboveScore - currentScore).toFixed(1) }
+      }
+    }
+
+    return { ...participant, notes }
+  })
+
+  console.log('[Scoreboard] participantsWithNotes:', result)
+
+  return result
 })
 
 // Status computed property
@@ -103,11 +134,10 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
             </div>
           </div>
         </div>
-        <!-- Scoreboard content (rest of graphic) -->
+        <!-- Scoreboard content -->
         <div class="w-full">
-          <!-- Example scoreboard layout -->
           <div
-            v-for="(participant, index) in sortedParticipants"
+            v-for="participant in participantsWithNotes"
             :key="participant.name"
             class="grid grid-cols-[1fr_3fr_1fr_1fr] items-center gap-[2vmin] p-[1vmin] my-[0.3vmin] border-b border-gray-300 last:border-b-0"
           >
@@ -130,11 +160,9 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
                 alt="nation"
                 class="rounded-l-[1.5vmin] h-[3vmin]"
               />
-
-              <!--<span class="h-[3vmin] w-[3vmin] rounded-[25%]">{{ participant.club }}</span>-->
-              <span class="font-bold text-[2vmin] flex">{{
-                utils.formatName(participant.name)
-              }}</span>
+              <span class="font-bold text-[2vmin] flex">
+                {{ utils.formatName(participant.name) }}
+              </span>
             </div>
 
             <!-- Total Score -->
@@ -147,12 +175,56 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
             </div>
 
             <!-- Notes -->
-            <div
-              class="inline-flex items-center bg-[rgba(0,0,75,0.825)] h-[3vmin] rounded-[1.5vmin] w-full"
-            >
-              <div class="w-full text-center font-bold text-[#888] text-[2vmin]">
-                <span class="font-bold text-[#888] text-[2vmin]"> SCORE </span>
-              </div>
+            <div class="h-[3vmin] w-full">
+              <!-- Medal (Gold/Silver/Bronze/Place) -->
+              <template v-if="participant.notes.type === 'medal'">
+                <div
+                  class="inline-flex items-center bg-[rgba(0,0,75,0.825)] h-full rounded-[1.5vmin] w-full"
+                >
+                  <div
+                    class="flex items-center justify-center font-bold text-[2vmin] w-[3vmin] h-full rounded-l-[1.5vmin]"
+                    :class="{
+                      'text-[#FFD700]': participant.notes.rank === 1,
+                      'text-[#C0C0C0]': participant.notes.rank === 2,
+                      'text-[#CD7F32]': participant.notes.rank === 3,
+                      'text-[#888]': participant.notes.rank >= 4,
+                    }"
+                  >
+                    {{ participant.notes.rank }}
+                  </div>
+                  <div
+                    class="flex-1 text-center font-bold text-[2vmin] -ml-[1.5vmin]"
+                    :class="{
+                      'text-[#FFD700]': participant.notes.medal === 'gold',
+                      'text-[#C0C0C0]': participant.notes.medal === 'silver',
+                      'text-[#CD7F32]': participant.notes.medal === 'bronze',
+                      'text-[#888]': participant.notes.medal === 'place',
+                    }"
+                  >
+                    {{ participant.notes.text }}
+                  </div>
+                </div>
+              </template>
+
+              <!-- Shoot Off or Difference -->
+              <template
+                v-else-if="
+                  participant.notes.type === 'shootoff' || participant.notes.type === 'difference'
+                "
+              >
+                <div
+                  class="inline-flex items-center bg-[rgba(0,0,75,0.825)] h-full rounded-[1.5vmin] w-full"
+                >
+                  <div class="w-full text-center font-bold text-[#888] text-[2vmin]">
+                    {{ participant.notes.text }}
+                  </div>
+                </div>
+              </template>
+
+              <!-- Hidden (first place with no info, or tied scores) -->
+              <template v-else>
+                <div class="h-full w-full"></div>
+              </template>
             </div>
           </div>
         </div>
