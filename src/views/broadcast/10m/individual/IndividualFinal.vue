@@ -160,7 +160,7 @@ const stageInfo = computed(() => {
           </div>
 
           <!-- NAME -->
-          <div class="bg-blue-950/100 text-gray-100">
+          <div class="bg-blue-950 text-gray-100">
             <div class="flex items-center pl-[0.25vw] font-bold h-[2.5vh]">
               {{ utils.formatName(data.name) }}
             </div>
