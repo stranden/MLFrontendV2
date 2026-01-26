@@ -27,6 +27,10 @@ const navItems = ref([
         ],
       },
       {
+        heading: 'Shared',
+        items: [{ name: 'Timer', href: '/broadcast/shootingtimer' }],
+      },
+      {
         heading: 'System',
         items: [{ name: 'Settings', href: '/broadcast/settings' }],
       },
