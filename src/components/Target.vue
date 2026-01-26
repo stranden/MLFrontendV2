@@ -58,16 +58,16 @@ export default {
         circle.setAttribute('cy', '50%')
         circle.setAttribute('r', '50%') // Circle radius as 50% of container size
         if (this.flags === 'E' || this.flags === 'ES') {
-          circle.setAttribute('fill', 'rgba(128, 128, 128, 0.75)') // Grey with 50% opacity for E and ES
+          circle.setAttribute('fill', 'rgba(107, 114, 128, 0.75)') // Grey with 50% opacity for E and ES
         }
         if (this.flags === 'P') {
-          circle.setAttribute('fill', 'rgba(190, 28, 28, 0.5)') // Red with 50% opacity for P
+          circle.setAttribute('fill', 'rgba(185, 28, 28, 0.5)') // Red with 50% opacity for P
         }
         if (this.flags === 'SP') {
-          circle.setAttribute('fill', 'rgba(190, 28, 28, 0.5)') // Red with 50% opacity for SP
+          circle.setAttribute('fill', 'rgba(185, 28, 28, 0.5)') // Red with 50% opacity for SP
         }
         if (this.flags === 'T') {
-          circle.setAttribute('fill', 'rgba(0, 143, 0, 0.5)') // Green with 50% opacity for T
+          circle.setAttribute('fill', 'rgba(21, 128, 61, 0.5)') // Green with 50% opacity for T
         }
         // Append circle to SVG
         targetSVG.appendChild(circle)
@@ -89,6 +89,6 @@ export default {
   /* border-color: #ffffff; */
   border-style: solid;
   border-width: 0.1rem;
-  z-index: 2;
+  z-index: 25;
 }
 </style>

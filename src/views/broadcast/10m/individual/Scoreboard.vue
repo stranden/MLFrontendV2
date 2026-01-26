@@ -105,7 +105,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
 <template>
   <div class="h-full w-full flex justify-center items-center">
     <div class="w-[60vw] h-[60vh] flex justify-center">
-      <div class="bg-white/50 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
+      <div class="bg-gray-200/50 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
         <!-- Header section -->
         <div class="flex items-center w-full">
           <!-- LEFT: Logos -->
@@ -122,13 +122,13 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
           <!-- CENTER: Title block -->
           <div class="flex-1 flex justify-between">
             <div class="flex flex-col text-left">
-              <span class="text-[3.0vmin] font-bold truncate">
+              <span class="text-[3.0vmin] text-gray-350 font-bold truncate">
                 {{ title }}
               </span>
-              <span class="text-[2.5vmin] font-medium truncate">
+              <span class="text-[2.5vmin] text-gray-250 font-medium truncate">
                 {{ discipline }}
               </span>
-              <span class="text-[2.0vmin] font-normal">
+              <span class="text-[2.0vmin] text-gray-250 font-normal">
                 {{ status }}
               </span>
             </div>
@@ -143,14 +143,14 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
           >
             <!-- Rank -->
             <div
-              class="flex items-center justify-center rounded-[1.5vmin] bg-[#00004b] text-[#e6e6e6] font-bold text-[2vmin] w-[3vmin] h-[3vmin]"
+              class="flex items-center justify-center rounded-[1.5vmin] bg-blue-950 text-gray-200 font-bold text-[2vmin] w-[3vmin] h-[3vmin]"
             >
               {{ participant.rank }}
             </div>
 
             <!-- Name + Nation -->
             <div
-              class="flex items-center rounded-[1.5vmin] bg-[#00004b] text-[#888] h-[3vmin] gap-[1.5vmin]"
+              class="flex items-center rounded-[1.5vmin] bg-blue-950 text-gray-500 h-[3vmin] gap-[1.5vmin]"
             >
               <img
                 :src="`${utils.countryFlag(
@@ -166,9 +166,9 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
             </div>
 
             <!-- Total Score -->
-            <div class="flex items-center justify-center text-[2vmin] font-bold text-[#e6e6e6]">
+            <div class="flex items-center justify-center text-[2vmin] font-bold text-gray-200">
               <div
-                class="flex items-center justify-center bg-[#00004b] w-[10vmin] h-[3vmin] rounded-[1.5vmin]"
+                class="flex items-center justify-center bg-blue-950 w-[10vmin] h-[3vmin] rounded-[1.5vmin]"
               >
                 {{ participant.totalScore }}
               </div>
@@ -179,7 +179,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
               <!-- Medal (Gold/Silver/Bronze/Place) -->
               <template v-if="participant.notes.type === 'medal'">
                 <div
-                  class="inline-flex items-center bg-[rgba(0,0,75,0.825)] h-full rounded-[1.5vmin] w-full"
+                  class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full"
                 >
                   <div
                     class="flex items-center justify-center font-bold text-[2vmin] w-[3vmin] h-full rounded-l-[1.5vmin]"
@@ -187,7 +187,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
                       'text-[#FFD700]': participant.notes.rank === 1,
                       'text-[#C0C0C0]': participant.notes.rank === 2,
                       'text-[#CD7F32]': participant.notes.rank === 3,
-                      'text-[#888]': participant.notes.rank >= 4,
+                      'text-gray-500': participant.notes.rank >= 4,
                     }"
                   >
                     {{ participant.notes.rank }}
@@ -198,7 +198,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
                       'text-[#FFD700]': participant.notes.medal === 'gold',
                       'text-[#C0C0C0]': participant.notes.medal === 'silver',
                       'text-[#CD7F32]': participant.notes.medal === 'bronze',
-                      'text-[#888]': participant.notes.medal === 'place',
+                      'text-gray-500': participant.notes.medal === 'place',
                     }"
                   >
                     {{ participant.notes.text }}
@@ -213,9 +213,9 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
                 "
               >
                 <div
-                  class="inline-flex items-center bg-[rgba(0,0,75,0.825)] h-full rounded-[1.5vmin] w-full"
+                  class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full"
                 >
-                  <div class="w-full text-center font-bold text-[#888] text-[2vmin]">
+                  <div class="w-full text-center font-bold text-gray-500 text-[2vmin]">
                     {{ participant.notes.text }}
                   </div>
                 </div>
