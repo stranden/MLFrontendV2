@@ -104,6 +104,8 @@ const status = computed(() => {
               :src="`/src/assets/img/logos/${logo}`"
               :alt="`${logo.split('.')[0]}-Logo`"
             />
+            <!-- Spacer for consistent width when only one logo -->
+            <div v-if="logos.length === 1" class="w-[7vmin] shrink-0"></div>
           </div>
 
           <!-- CENTER: Title block -->
