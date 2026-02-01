@@ -32,7 +32,7 @@ const navItems = ref([
       },
       {
         heading: 'System',
-        items: [{ name: 'Settings', href: '/broadcast/settings' }],
+        items: [{ name: 'Settings', href: '/settings' }],
       },
     ],
   },

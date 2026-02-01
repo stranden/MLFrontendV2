@@ -1,12 +1,10 @@
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useLiveData } from '@/composables/useLiveData.js'
 
 import * as utils from '@/utils'
 
-const { fetchedData } = useLiveData('fp')
-const route = useRoute() // <-- This is now your source of truth
+const { fetchedData, title, discipline, logos } = useLiveData('fp')
 
 const participantsWithNotes = computed(() => {
   if (!fetchedData.value) return []
@@ -89,17 +87,6 @@ const status = computed(() => {
 
   return `Standing${highestMatchShotCount > 1 ? 's' : ''} after ${highestMatchShotCount} shot${highestMatchShotCount > 1 ? 's' : ''}`
 })
-
-// These are computed and reactive, and will always match the URL query
-const logos = computed(() =>
-  route.query.logos
-    ? typeof route.query.logos === 'string'
-      ? route.query.logos.split(',')
-      : []
-    : [],
-)
-const title = computed(() => route.query.title || 'TITLE')
-const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
 </script>
 
 <template>
@@ -178,9 +165,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
             <div class="h-[3vmin] w-full">
               <!-- Medal (Gold/Silver/Bronze/Place) -->
               <template v-if="participant.notes.type === 'medal'">
-                <div
-                  class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full"
-                >
+                <div class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full">
                   <div
                     class="flex items-center justify-center font-bold text-[2vmin] w-[3vmin] h-full rounded-l-[1.5vmin]"
                     :class="{
@@ -212,9 +197,7 @@ const discipline = computed(() => route.query.discipline || 'DISCIPLINE')
                   participant.notes.type === 'shootoff' || participant.notes.type === 'difference'
                 "
               >
-                <div
-                  class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full"
-                >
+                <div class="inline-flex items-center bg-blue-950 h-full rounded-[1.5vmin] w-full">
                   <div class="w-full text-center font-bold text-gray-500 text-[2vmin]">
                     {{ participant.notes.text }}
                   </div>

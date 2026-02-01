@@ -7,6 +7,7 @@ import BroadcastLayout from '@/layouts/BroadcastLayout.vue'
 // Web views
 const Home = () => import('@/views/web/Home.vue')
 const About = () => import('@/views/web/About.vue')
+const Settings = () => import('@/views/web/Settings.vue')
 
 // Broadcast views
 const ShootingTimer = () => import('@/views/broadcast/ShootingTimer.vue')
@@ -19,6 +20,7 @@ const TeamFinal10m = () => import('@/views/broadcast/10m/team/TeamFinal.vue')
 const webroutes = [
   { path: '', component: Home },
   { path: 'about', component: About },
+  { path: 'settings', component: Settings },
 ]
 
 // Broadcast routes

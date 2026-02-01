@@ -45,9 +45,9 @@ function getConfigValue(key, envVar, fallback) {
  * - Test mode enabled by ?testdata=... in URL.
  * - Handles WebSocket auto-refresh, auto-skipped in test mode.
  *
- * @param {Object} opts Options object: { method: string }
+ * @param {string} method The method to use for fetching data (default: 'fp')
  */
-export function useLiveData({ method = 'fp' } = {}) {
+export function useLiveData(method = 'fp') {
   // Lanes: prefer URL/localStorage/ENV/fallback, always as array
   const lanesRaw = getConfigValue('lanes', 'VITE_MLRANGE_LANES', 'A,B,C,D,E,F,G,H')
   const lanes = lanesRaw
@@ -58,9 +58,18 @@ export function useLiveData({ method = 'fp' } = {}) {
   // MLRange IP: same precedence logic, fallback to localhost
   const mlrangeIP = getConfigValue('mlrange', 'VITE_MLRANGE_IP', 'localhost')
 
-  // Test data: enabled if ?testdata=filename in URL (filename = no extension)
-  const testDataFile = getQueryParam('testdata') || null
+  // Test data: enabled if ?testdata=filename in URL or localStorage (filename = no extension)
+  const testDataFile = getConfigValue('testdata', 'VITE_TESTDATA', null)
   const isTestMode = !!testDataFile
+
+  // Scoreboard settings
+  const title = getConfigValue('title', 'VITE_TITLE', 'TITLE')
+  const discipline = getConfigValue('discipline', 'VITE_DISCIPLINE', 'DISCIPLINE')
+  const logosRaw = getConfigValue('logos', 'VITE_LOGOS', '')
+  const logos = logosRaw
+    .split(',')
+    .map((l) => l.trim())
+    .filter(Boolean)
 
   // Reactive reference for data
   const fetchedData = ref([])
@@ -129,5 +138,8 @@ export function useLiveData({ method = 'fp' } = {}) {
     lanes, // Array of lane letters in use
     isTestMode, // true if using test data
     testDataFile, // currently loaded testData file (or null)
+    title, // scoreboard title
+    discipline, // scoreboard discipline
+    logos, // array of logo filenames
   }
 }
