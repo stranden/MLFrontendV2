@@ -102,7 +102,6 @@ function getLogoFilenames(logos) {
 }
 
 // Generate URL with current settings as query params
-// type: 'individual' | 'scoreboard' | 'timer'
 function generateUrl(basePath, type) {
   const params = new URLSearchParams()
 
@@ -147,23 +146,31 @@ function generateUrl(basePath, type) {
     }
   }
 
-  const queryString = params.toString()
-  if (queryString) {
-    return `${window.location.origin}${basePath}/?${queryString}`
-  }
-  return `${window.location.origin}${basePath}/`
+  // Convert to string and replace + with %20 for CasparCG compatibility
+  const queryString = params.toString().replace(/\+/g, '%20')
+
+  return queryString
 }
 
 // Broadcast URLs for the table with their types
-const broadcastUrls = computed(() => [
-  { name: '10m Individual', path: '/broadcast/10m/individual', type: 'individual' },
-  { name: '10m Scoreboard', path: '/broadcast/10m/individual/scoreboard', type: 'scoreboard' },
-  { name: '10m Mixed', path: '/broadcast/10m/mixed', type: 'individual' },
-  { name: '10m Team', path: '/broadcast/10m/team', type: 'individual' },
-  { name: '50m Individual', path: '/broadcast/50m/individual', type: 'individual' },
-  { name: '50m Scoreboard', path: '/broadcast/50m/individual/scoreboard', type: 'scoreboard' },
-  { name: 'Shooting Timer', path: '/broadcast/shootingtimer', type: 'timer' },
-])
+const broadcastUrls = [
+  { name: '10m Individual', path: '/broadcast/10m/individual/', type: 'individual' },
+  { name: '10m Scoreboard', path: '/broadcast/10m/individual/scoreboard/', type: 'scoreboard' },
+  { name: '10m Mixed', path: '/broadcast/10m/mixed/', type: 'individual' },
+  { name: '10m Team', path: '/broadcast/10m/team/', type: 'individual' },
+  { name: '50m Individual', path: '/broadcast/50m/individual/', type: 'individual' },
+  { name: '50m Scoreboard', path: '/broadcast/50m/individual/scoreboard/', type: 'scoreboard' },
+  { name: 'Shooting Timer', path: '/broadcast/shootingtimer/', type: 'timer' },
+]
+
+// Build full URL for display and copying
+function getFullUrl(basePath, type) {
+  const queryString = generateUrl(basePath, type)
+  if (queryString) {
+    return `${window.location.origin}${basePath}?${queryString}`
+  }
+  return `${window.location.origin}${basePath}`
+}
 
 // Copy to clipboard with feedback
 const copiedUrl = ref('')
@@ -179,7 +186,7 @@ async function copyToClipboard(text, path) {
     <Navbar />
 
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold mb-8">Broadcast Settings</h1>
+      <h1 class="text-3xl font-bold mb-8">Broadcast settings</h1>
 
       <div class="grid lg:grid-cols-2 gap-6">
         <!-- Data Source Card -->
@@ -201,6 +208,7 @@ async function copyToClipboard(text, path) {
                 />
               </svg>
               Data Source
+              <span v-if="isTestMode" class="badge badge-warning">Test Mode</span>
             </h2>
 
             <!-- Test Mode Toggle -->
@@ -217,7 +225,6 @@ async function copyToClipboard(text, path) {
                   class="toggle toggle-primary"
                 />
                 <span class="label-text">Use Test Data</span>
-                <span v-if="isTestMode" class="badge badge-warning">Test Mode</span>
               </label>
             </div>
 
@@ -393,12 +400,12 @@ async function copyToClipboard(text, path) {
                   </td>
                   <td>
                     <code class="text-xs bg-base-200 px-2 py-1 rounded break-all">
-                      {{ generateUrl(item.path, item.type) }}
+                      {{ getFullUrl(item.path, item.type) }}
                     </code>
                   </td>
                   <td>
                     <button
-                      @click="copyToClipboard(generateUrl(item.path, item.type), item.path)"
+                      @click="copyToClipboard(getFullUrl(item.path, item.type), item.path)"
                       class="btn btn-sm"
                       :class="copiedUrl === item.path ? 'btn-success' : 'btn-ghost'"
                     >
