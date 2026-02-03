@@ -208,7 +208,7 @@ watch(
           />
 
           <!-- SCORE TOP RIGHT -->
-          <div class="relative bg-gray-200/50 text-gray-350 rounded-tr-lg">
+          <div class="relative bg-gray-200/50 text-gray-400 rounded-tr-lg">
             <div
               class="relative left-[4vw] w-[calc(100%-4vw)] h-[1.5vh] flex justify-center items-center text-[0.7rem] font-semibold italic"
             >
@@ -217,7 +217,7 @@ watch(
           </div>
 
           <!-- SHOT VALUE -->
-          <div class="relative bg-blue-900/80 text-gray-250">
+          <div class="relative bg-blue-900/80 text-gray-300">
             <div
               class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold"
             >

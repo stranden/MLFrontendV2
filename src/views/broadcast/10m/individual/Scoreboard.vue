@@ -139,7 +139,7 @@ const status = computed(() => {
 
             <!-- Name + Nation -->
             <div
-              class="flex items-center rounded-[1.5vmin] bg-blue-950 text-gray-500 h-[3vmin] gap-[1.5vmin]"
+              class="flex items-center rounded-[1.5vmin] bg-blue-950 text-gray-200 h-[3vmin] gap-[1.5vmin]"
             >
               <img
                 :src="`${utils.countryFlag(
