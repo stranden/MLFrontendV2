@@ -30,17 +30,24 @@ function getShooterClass(flags) {
     .join(' ')
 }
 
+function getClubNationClass(flags) {
+  return [
+    flags === 'T' && 'z-20 rounded-b-lg bg-green-400',
+    (flags === 'P' || flags === 'SP') && 'z-20 rounded-br-lg bg-red-400',
+  ]
+}
+
 function getShooterWidthClass(stage) {
   const widthClasses = {
-    series: 'w-[10vw] min-w-[10vw] max-w-[10vw]', // 8 shooters
-    'first-single-shot-series': 'w-[10vw] min-w-[10vw] max-w-[10vw]', // 8 shooters
-    'second-single-shot-series': 'w-[11vw] min-w-[11vw] max-w-[11vw]', // 7 shooters
+    series: 'w-[9.25vw] min-w-[9.25vw] max-w-[9.25vw]', // 8 shooters
+    'first-single-shot-series': 'w-[9.25vw] min-w-[9.25vw] max-w-[9.25vw]', // 8 shooters
+    'second-single-shot-series': 'w-[10vw] min-w-[10vw] max-w-[10vw]', // 7 shooters
     'third-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 6 shooters
-    'fourth-single-shot-series': 'w-[14vw] min-w-[14vw] max-w-[14vw]', // 5 shooters
-    'fifth-single-shot-series': 'w-[16vw] min-w-[16vw] max-w-[16vw]', // 4 shooters
-    'sixth-single-shot-series': 'w-[18vw] min-w-[18vw] max-w-[18vw]', // 3 shooters
-    'seventh-single-shot-series': 'w-[15vw] min-w-[15vw] max-w-[15vw]', // 2 shooters (final!)
-    'series-shootoff': 'w-[15vw] min-w-[15vw] max-w-[15vw]', // shootoff
+    'fourth-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 5 shooters
+    'fifth-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 4 shooters
+    'sixth-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 3 shooters
+    'seventh-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 2 shooters (final!)
+    'series-shootoff': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // shootoff
   }
   return widthClasses[stage] || 'w-[10vw] min-w-[10vw] max-w-[10vw]'
 }
@@ -186,12 +193,12 @@ watch(
     <!-- Bottom graphic content area within TV safe area -->
     <div class="w-[90vw]">
       <!-- Shooters row -->
-      <div v-if="stageInfo.stage != 'unknown'" class="flex gap-[1vw] justify-around">
+      <div v-if="stageInfo.stage != 'unknown'" class="flex justify-around">
         <div
           v-for="(data, index) in activeShooters"
           :key="index"
-          class="relative bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vw]"
-          :class="[getShooterClass(data.flags), getShooterWidthClass(stageInfo.widthStage)]"
+          class="relative bg-white/10 rounded-lg transition-all duration-300 ease-in-out"
+          :class="getShooterWidthClass(stageInfo.widthStage)"
         >
           <!-- TARGET COMPONENT -->
           <Target
@@ -243,7 +250,10 @@ watch(
           </div>
 
           <!-- CLUB / NATION -->
-          <div class="bg-gray-200 rounded-b-lg h-[2vh] flex">
+          <div
+            class="bg-gray-200 rounded-b-lg h-[2vh] flex"
+            :class="getClubNationClass(data.flags)"
+          >
             <img
               :src="
                 utils.countryFlag(

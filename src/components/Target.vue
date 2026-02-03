@@ -52,8 +52,8 @@ export default {
         this.flags === 'T' ||
         this.flags === 'SP'
       ) {
-        // Create circle element for overlay
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        // Create circle element for overlay - Commented out due to new CSS implementation
+        /*const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
         circle.setAttribute('cx', '50%')
         circle.setAttribute('cy', '50%')
         circle.setAttribute('r', '50%') // Circle radius as 50% of container size
@@ -70,7 +70,7 @@ export default {
           circle.setAttribute('fill', 'rgba(21, 128, 61, 0.5)') // Green with 50% opacity for T
         }
         // Append circle to SVG
-        targetSVG.appendChild(circle)
+        targetSVG.appendChild(circle)*/
       }
     },
   },
