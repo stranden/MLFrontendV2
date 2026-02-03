@@ -1,11 +1,14 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, watch, ref } from 'vue'
 import { useLiveData } from '@/composables/useLiveData.js'
 import Target from '@/components/Target.vue'
 
 import * as utils from '@/utils'
 
 const { fetchedData } = useLiveData('fp')
+
+// Track the last "active" stage before presentation
+const lastActiveStage = ref('first-single-shot-series')
 
 // Utility functions
 function extractShotsForShooter(shooter) {
@@ -25,6 +28,21 @@ function getShooterClass(flags) {
   ]
     .filter(Boolean)
     .join(' ')
+}
+
+function getShooterWidthClass(stage) {
+  const widthClasses = {
+    series: 'w-[10vw] min-w-[10vw] max-w-[10vw]', // 8 shooters
+    'first-single-shot-series': 'w-[10vw] min-w-[10vw] max-w-[10vw]', // 8 shooters
+    'second-single-shot-series': 'w-[11vw] min-w-[11vw] max-w-[11vw]', // 7 shooters
+    'third-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 6 shooters
+    'fourth-single-shot-series': 'w-[14vw] min-w-[14vw] max-w-[14vw]', // 5 shooters
+    'fifth-single-shot-series': 'w-[16vw] min-w-[16vw] max-w-[16vw]', // 4 shooters
+    'sixth-single-shot-series': 'w-[18vw] min-w-[18vw] max-w-[18vw]', // 3 shooters
+    'seventh-single-shot-series': 'w-[15vw] min-w-[15vw] max-w-[15vw]', // 2 shooters (final!)
+    'series-shootoff': 'w-[15vw] min-w-[15vw] max-w-[15vw]', // shootoff
+  }
+  return widthClasses[stage] || 'w-[10vw] min-w-[10vw] max-w-[10vw]'
 }
 
 // Filtering functions
@@ -54,11 +72,15 @@ const stageInfo = computed(() => {
   const active = activeShooters.value.length
   const hasShootOff = shooters.some((s) => s.flags === 'T')
   const hasPendingElimination = shooters.some((s) => ['P', 'SP'].includes(s.flags))
+  const isShootoffPending = shooters.some((s) => s.flags === 'SP')
+  const isRegularPending = shooters.some((s) => s.flags === 'P')
   const seriesTypeShootoff = shooters.some((s) => s.seriesType === 'shootoff')
+
   // Defensive: empty array fallback for Math.max
   const matchShotCounts = shooters.map((p) => p.matchShotCount || 0)
   const fiveShotsSeries = matchShotCounts.length && Math.max(...matchShotCounts) <= 10
 
+  // Determine base stage from active shooter count (independent of pending elimination)
   const firstSingleShotSeries = active === 8 && !fiveShotsSeries
   const secondSingleShotSeries = active === 7 && !seriesTypeShootoff
   const thirdSingleShotSeries = active === 6 && !seriesTypeShootoff
@@ -66,21 +88,30 @@ const stageInfo = computed(() => {
   const fifthSingleShotSeries = active === 4 && !seriesTypeShootoff
   const sixthSingleShotSeries = active === 3 && !seriesTypeShootoff
   const seventhSingleShotSeries = active === 2 && !seriesTypeShootoff
-  const shootOffSeries = seriesTypeShootoff && hasShootOff
+  const shootOffSeries = seriesTypeShootoff || hasShootOff || isShootoffPending
 
-  return {
-    fiveShotsSeries,
-    firstSingleShotSeries,
-    secondSingleShotSeries,
-    thirdSingleShotSeries,
-    fourthSingleShotSeries,
-    fifthSingleShotSeries,
-    sixthSingleShotSeries,
-    seventhSingleShotSeries,
-    shootOffSeries,
-    hasPendingElimination,
-    stage: fiveShotsSeries
-      ? 'series'
+  // Map active shooter count directly to a stage for width calculation
+  function getStageFromActiveCount(count, isShootoff) {
+    if (isShootoff) return 'series-shootoff'
+    if (fiveShotsSeries) return 'series'
+
+    const stageMap = {
+      8: 'first-single-shot-series',
+      7: 'second-single-shot-series',
+      6: 'third-single-shot-series',
+      5: 'fourth-single-shot-series',
+      4: 'fifth-single-shot-series',
+      3: 'sixth-single-shot-series',
+      2: 'seventh-single-shot-series',
+    }
+    return stageMap[count] || 'first-single-shot-series'
+  }
+
+  // Determine the base stage (based on active shooter count)
+  const baseStage = fiveShotsSeries
+    ? 'series'
+    : shootOffSeries
+      ? 'series-shootoff'
       : firstSingleShotSeries
         ? 'first-single-shot-series'
         : secondSingleShotSeries
@@ -95,13 +126,58 @@ const stageInfo = computed(() => {
                   ? 'sixth-single-shot-series'
                   : seventhSingleShotSeries
                     ? 'seventh-single-shot-series'
-                    : shootOffSeries
-                      ? 'series-shootoff'
-                      : hasPendingElimination
-                        ? 'presentation'
-                        : 'unknown',
+                    : 'unknown'
+
+  // Determine final stage and width stage
+  let stage = baseStage
+  let widthStage =
+    baseStage !== 'unknown' ? baseStage : getStageFromActiveCount(active, shootOffSeries)
+
+  if (hasPendingElimination) {
+    stage = 'presentation'
+    // Use shootoff width if we're in a shootoff scenario
+    widthStage = getStageFromActiveCount(active, shootOffSeries)
+  }
+
+  // Update lastActiveStage when not in presentation and we have a valid stage
+  if (!hasPendingElimination && baseStage !== 'unknown') {
+    lastActiveStage.value = baseStage
+  }
+
+  return {
+    fiveShotsSeries,
+    firstSingleShotSeries,
+    secondSingleShotSeries,
+    thirdSingleShotSeries,
+    fourthSingleShotSeries,
+    fifthSingleShotSeries,
+    sixthSingleShotSeries,
+    seventhSingleShotSeries,
+    shootOffSeries,
+    hasPendingElimination,
+    isShootoffPending,
+    isRegularPending,
+    stage,
+    widthStage,
   }
 })
+
+watch(
+  () => stageInfo.value,
+  (newInfo, oldInfo) => {
+    console.log('[IndividualFinal] Stage changed:', {
+      stage: newInfo.stage,
+      widthStage: newInfo.widthStage,
+      previousStage: oldInfo?.stage,
+      activeShooters: activeShooters.value.length,
+      hasPendingElimination: newInfo.hasPendingElimination,
+      isShootoffPending: newInfo.isShootoffPending,
+      isRegularPending: newInfo.isRegularPending,
+      shootOffSeries: newInfo.shootOffSeries,
+    })
+  },
+  { immediate: false },
+)
 </script>
 
 <template>
@@ -110,12 +186,12 @@ const stageInfo = computed(() => {
     <!-- Bottom graphic content area within TV safe area -->
     <div class="w-[90vw]">
       <!-- Shooters row -->
-      <div v-if="stageInfo.stage != 'unknown'" class="flex gap-[1vw]">
+      <div v-if="stageInfo.stage != 'unknown'" class="flex gap-[1vw] justify-around">
         <div
           v-for="(data, index) in activeShooters"
           :key="index"
-          class="relative flex-1 bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vw]"
-          :class="getShooterClass(data.flags)"
+          class="relative bg-white/10 rounded-lg transition-all duration-300 ease-in-out m-[0.5vw]"
+          :class="[getShooterClass(data.flags), getShooterWidthClass(stageInfo.widthStage)]"
         >
           <!-- TARGET COMPONENT -->
           <Target
@@ -186,74 +262,3 @@ const stageInfo = computed(() => {
     </div>
   </div>
 </template>
-
-<!--
-  <div
-    v-if="stageInfo.stage !== 'unknown'"
-    id="shootingDisplayContainer"
-    :class="`stage-${stageInfo.stage}`"
-    class="absolute left-[5vw] right-[5vw] bottom-[5vw] flex flex-wrap justify-center items-end transition-all duration-500 top-auto h-auto"
-  >
-    <div
-      v-for="(data, index) in activeShooters"
-      :key="index"
-      class="relative flex-1 rounded-lg bg-white/10 transition-all duration-300 mb-0"
-      :class="getShooterClass(data.flags)"
-    >
-      <Target
-        :target-name="data.targetId"
-        :shot-data="extractShotsForShooter(data)"
-        :flags="data.flags"
-      />
-
-      <div class="relative top-0 left-0 bg-gray-200/50 rounded-tr-lg opacity-50">
-        <div
-          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-6 font-bold italic text-xs"
-        >
-          SCORE
-        </div>
-      </div>
-
-      <div class="relative top-0 left-0 bg-blue-900/80 text-gray-400">
-        <div
-          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-10 font-bold text-xl"
-        >
-          {{ data.shots.length > 0 ? data.shots[data.shots.length - 1].vd : '0.0' }}
-        </div>
-      </div>
-
-      <div class="w-full bg-blue-900">
-        <div
-          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-10 font-bold text-xl text-gray-100"
-        >
-          {{ data.totalScore }}
-        </div>
-      </div>
-
-      <div class="w-full bg-gray-200">
-        <div
-          class="relative left-[4vw] w-[calc(100%-4vw)] flex justify-center items-center h-8 font-bold italic text-xs"
-        >
-          Total
-        </div>
-      </div>
-
-      <div class="w-full bg-blue-900 opacity-100">
-        <div class="flex items-center pl-2.5 h-10 font-bold text-lg text-gray-100">
-          {{ formatName(data.name) }}
-        </div>
-      </div>
-
-      <div class="w-full bg-gray-200 rounded-b-lg">
-        <div class="flex items-center pl-2.5 h-8 font-bold text-base">
-          <img
-            :src="svgSource(parseClubData(data.club).nation)"
-            alt="nation"
-            class="h-4 rounded-full"
-          />
-          <span class="font-bold text-base pl-2">{{ parseClubData(data.club).club }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
