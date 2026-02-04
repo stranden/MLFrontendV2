@@ -1,40 +1,17 @@
 <script setup>
 import { computed, watch, ref } from 'vue'
 import { useLiveData } from '@/composables/useLiveData.js'
-import Target from '@/components/Target.vue'
-
-import * as utils from '@/utils'
+import ShooterDisplay from '@/components/ShooterDisplay.vue'
 
 const { fetchedData } = useLiveData('fp')
 
 // Track the last "active" stage before presentation
 const lastActiveStage = ref('first-single-shot-series')
 
-// Utility functions
-function extractShotsForShooter(shooter) {
-  return shooter?.shots?.map(({ x, y }) => ({ x, y })) || []
-}
-
-function getShooterClass(flags) {
-  return [
-    flags === 'E' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
-    flags === 'ES' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
-    flags === 'T' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-green-700/50',
-    (flags === 'P' || flags === 'SP') &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-red-700/50',
-  ]
-    .filter(Boolean)
-    .join(' ')
-}
-
-function getClubNationClass(flags) {
-  return [
-    flags === 'T' && 'z-20 rounded-b-lg bg-green-400',
-    (flags === 'P' || flags === 'SP') && 'z-20 rounded-br-lg bg-red-400',
-  ]
+// Filtering functions
+function removeShootersWithFlags(shooters, flagKey, flagValues) {
+  const values = Array.isArray(flagValues) ? flagValues : [flagValues]
+  return shooters.filter((shooter) => !values.includes(shooter[flagKey]))
 }
 
 function getShooterWidthClass(stage) {
@@ -52,26 +29,9 @@ function getShooterWidthClass(stage) {
   return widthClasses[stage] || 'w-[10vw] min-w-[10vw] max-w-[10vw]'
 }
 
-// Filtering functions
-function includeAllShooters(shooters) {
-  return shooters
-}
-function removeShootersWithFlags(shooters, flagKey, flagValues) {
-  const values = Array.isArray(flagValues) ? flagValues : [flagValues]
-  return shooters.filter((shooter) => !values.includes(shooter[flagKey]))
-}
-function includeShootersWithFlags(shooters, flagKey, flagValues) {
-  const values = Array.isArray(flagValues) ? flagValues : [flagValues]
-  return shooters.filter((shooter) => values.includes(shooter[flagKey]))
-}
-
 // Computed values
-const allShooters = computed(() => includeAllShooters(fetchedData.value))
 const activeShooters = computed(() =>
   removeShootersWithFlags(fetchedData.value, 'flags', ['E', 'ES']),
-)
-const eliminatedShooters = computed(() =>
-  includeShootersWithFlags(fetchedData.value, 'flags', ['P', 'SP']),
 )
 
 const stageInfo = computed(() => {
@@ -194,80 +154,12 @@ watch(
     <div class="w-[90vw]">
       <!-- Shooters row -->
       <div v-if="stageInfo.stage != 'unknown'" class="flex justify-around">
-        <div
+        <ShooterDisplay
           v-for="(data, index) in activeShooters"
           :key="index"
-          class="relative bg-white/10 rounded-lg transition-all duration-300 ease-in-out"
-          :class="getShooterWidthClass(stageInfo.widthStage)"
-        >
-          <!-- TARGET COMPONENT -->
-          <Target
-            :targetName="data.targetId"
-            :shotData="extractShotsForShooter(data)"
-            :flags="data.flags"
-          />
-
-          <!-- SCORE TOP RIGHT -->
-          <div class="relative bg-gray-200/50 text-gray-400 rounded-tr-lg">
-            <div
-              class="relative left-[4vw] w-[calc(100%-4vw)] h-[1.5vh] flex justify-center items-center text-[0.7rem] font-semibold italic"
-            >
-              SCORE
-            </div>
-          </div>
-
-          <!-- SHOT VALUE -->
-          <div class="relative bg-blue-900/80 text-gray-300">
-            <div
-              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold"
-            >
-              {{ data.shots.length > 0 ? data.shots[data.shots.length - 1].vd : '0.0' }}
-            </div>
-          </div>
-
-          <!-- TOTAL SCORE -->
-          <div class="relative bg-blue-900 text-gray-100">
-            <div
-              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2.5vh] flex justify-center items-center text-[1.25rem] font-bold"
-            >
-              {{ data.totalScore }}
-            </div>
-          </div>
-
-          <div class="relative bg-gray-200/75 text-gray-900">
-            <div
-              class="relative left-[4vw] w-[calc(100%-4vw)] h-[2vh] flex justify-center items-center text-[0.8rem] font-semibold italic"
-            >
-              Total
-            </div>
-          </div>
-
-          <!-- NAME -->
-          <div class="bg-blue-950 text-gray-100">
-            <div class="flex items-center pl-[0.25vw] font-bold h-[2.5vh]">
-              {{ utils.formatName(data.name) }}
-            </div>
-          </div>
-
-          <!-- CLUB / NATION -->
-          <div
-            class="bg-gray-200 rounded-b-lg h-[2vh] flex"
-            :class="getClubNationClass(data.flags)"
-          >
-            <img
-              :src="
-                utils.countryFlag(
-                  utils.convertIocToAlpha2(utils.parseClubData(data.club).nation),
-                  '4x3',
-                )
-              "
-              alt="nation"
-              class="h-[full] rounded-bl-lg"
-            /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">{{
-              utils.parseClubData(data.club).club
-            }}</span>
-          </div>
-        </div>
+          :shooter="data"
+          :widthClass="getShooterWidthClass(stageInfo.widthStage)"
+        />
       </div>
     </div>
   </div>

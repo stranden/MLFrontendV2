@@ -13,6 +13,7 @@ const Settings = () => import('@/views/web/Settings.vue')
 const ShootingTimer = () => import('@/views/broadcast/ShootingTimer.vue')
 const IndividualFinal10m = () => import('@/views/broadcast/10m/individual/IndividualFinal.vue')
 const Scoreboard10m = () => import('@/views/broadcast/10m/individual/Scoreboard.vue')
+const HeadToHead10m = () => import('@/views/broadcast/10m/individual/HeadToHead.vue')
 const MixedFinal10m = () => import('@/views/broadcast/10m/mixed/MixedFinal.vue')
 const TeamFinal10m = () => import('@/views/broadcast/10m/team/TeamFinal.vue')
 
@@ -28,6 +29,7 @@ const broadcastRoutes = [
   { path: 'shootingtimer', component: ShootingTimer },
   { path: '10m/individual', component: IndividualFinal10m },
   { path: '10m/individual/scoreboard', component: Scoreboard10m },
+  { path: '10m/individual/h2h', component: HeadToHead10m },
   { path: '10m/mixed', component: MixedFinal10m },
   { path: '10m/team', component: TeamFinal10m },
 ]

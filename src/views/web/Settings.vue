@@ -21,6 +21,9 @@ const availableLogos = Object.keys(logoModules).map((path) => {
   }
 })
 
+// Available lanes for Head-to-Head
+const availableLanes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
 // Define all configurable parameters
 const settings = ref({
   testdata: '',
@@ -29,6 +32,8 @@ const settings = ref({
   title: '',
   discipline: '',
   logos: [],
+  'lane-left': 'A',
+  'lane-right': 'B',
 })
 
 // Computed to check if we're in test mode
@@ -41,6 +46,8 @@ onMounted(() => {
   settings.value.lanes = localStorage.getItem('lanes') || 'A,B,C,D,E,F,G,H'
   settings.value.title = localStorage.getItem('title') || ''
   settings.value.discipline = localStorage.getItem('discipline') || ''
+  settings.value['lane-left'] = localStorage.getItem('lane-left') || 'A'
+  settings.value['lane-right'] = localStorage.getItem('lane-right') || 'B'
 
   const logosStr = localStorage.getItem('logos') || ''
   settings.value.logos = logosStr ? logosStr.split(',').filter(Boolean) : []
@@ -92,6 +99,18 @@ function saveSettings() {
     localStorage.removeItem('logos')
   }
 
+  if (settings.value['lane-left']) {
+    localStorage.setItem('lane-left', settings.value['lane-left'])
+  } else {
+    localStorage.removeItem('lane-left')
+  }
+
+  if (settings.value['lane-right']) {
+    localStorage.setItem('lane-right', settings.value['lane-right'])
+  } else {
+    localStorage.removeItem('lane-right')
+  }
+
   showSaveToast.value = true
   setTimeout(() => (showSaveToast.value = false), 3000)
 }
@@ -125,6 +144,16 @@ function generateUrl(basePath, type) {
       params.set('lanes', settings.value.lanes)
     }
   }
+  // Head-to-Head: mlrange/testdata + lane-left + lane-right
+  else if (type === 'h2h') {
+    if (isTestMode.value && settings.value.testdata) {
+      params.set('testdata', settings.value.testdata)
+    } else if (settings.value.mlrange) {
+      params.set('mlrange', settings.value.mlrange)
+    }
+    params.set('lane-left', settings.value['lane-left'])
+    params.set('lane-right', settings.value['lane-right'])
+  }
   // Scoreboard: mlrange/testdata + lanes + title + discipline + logos
   else if (type === 'scoreboard') {
     if (isTestMode.value && settings.value.testdata) {
@@ -155,6 +184,7 @@ function generateUrl(basePath, type) {
 // Broadcast URLs for the table with their types
 const broadcastUrls = [
   { name: '10m Individual', path: '/broadcast/10m/individual/', type: 'individual' },
+  { name: '10m Head-to-Head', path: '/broadcast/10m/individual/h2h/', type: 'h2h' },
   { name: '10m Scoreboard', path: '/broadcast/10m/individual/scoreboard/', type: 'scoreboard' },
   { name: '10m Mixed', path: '/broadcast/10m/mixed/', type: 'individual' },
   //{ name: '10m Team', path: '/broadcast/10m/team/', type: 'individual' },
@@ -188,7 +218,7 @@ async function copyToClipboard(text, path) {
     <div class="container mx-auto px-4 py-8">
       <h1 class="text-3xl font-bold mb-8">Broadcast settings</h1>
 
-      <div class="grid lg:grid-cols-2 gap-6">
+      <div class="grid lg:grid-cols-3 gap-6">
         <!-- Data Source Card -->
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
@@ -331,6 +361,73 @@ async function copyToClipboard(text, path) {
             </div>
           </div>
         </div>
+
+        <!-- Head-to-Head Settings Card -->
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                />
+              </svg>
+              Head-to-Head
+            </h2>
+
+            <div class="grid grid-cols-1 gap-4">
+              <!-- Left Lane -->
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text">Left Lane</span>
+                </label>
+                <select v-model="settings['lane-left']" class="select select-bordered w-full">
+                  <option v-for="lane in availableLanes" :key="lane" :value="lane">
+                    Lane {{ lane }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Right Lane -->
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text">Right Lane</span>
+                </label>
+                <select v-model="settings['lane-right']" class="select select-bordered w-full">
+                  <option v-for="lane in availableLanes" :key="lane" :value="lane">
+                    Lane {{ lane }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Warning if same lane selected -->
+            <div v-if="settings['lane-left'] === settings['lane-right']" class="alert alert-warning mt-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Left and right lanes are the same</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Save Button -->
@@ -396,6 +493,11 @@ async function copyToClipboard(text, path) {
                       v-if="item.type === 'timer' && isTestMode"
                       class="badge badge-ghost badge-sm ml-2"
                       >No test data</span
+                    >
+                    <span
+                      v-if="item.type === 'h2h'"
+                      class="badge badge-info badge-sm ml-2"
+                      >{{ settings['lane-left'] }} vs {{ settings['lane-right'] }}</span
                     >
                   </td>
                   <td>

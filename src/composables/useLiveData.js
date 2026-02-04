@@ -21,7 +21,7 @@ function getQueryParam(param) {
  * @param {any} fallback Default fallback value
  * @returns {string}
  */
-function getConfigValue(key, envVar, fallback) {
+export function getConfigValue(key, envVar, fallback) {
   // 1: Try query param
   let v = getQueryParam(key)
   if (v) return v
@@ -36,6 +36,30 @@ function getConfigValue(key, envVar, fallback) {
 
   // 4: Fallback hardcoded
   return fallback
+}
+
+/**
+ * Compute lanes from various URL param formats:
+ * - ?lanes=A,B,C,D (standard)
+ * - ?lane-left=A&lane-right=B (head-to-head)
+ * Falls back to config precedence if neither is present.
+ * @returns {string[]} Array of lane letters
+ */
+function getLanes() {
+  // Check for head-to-head params first
+  const laneLeft = getQueryParam('lane-left')
+  const laneRight = getQueryParam('lane-right')
+
+  if (laneLeft && laneRight) {
+    return [laneLeft, laneRight]
+  }
+
+  // Fall back to standard lanes param
+  const lanesRaw = getConfigValue('lanes', 'VITE_MLRANGE_LANES', 'A,B,C,D,E,F,G,H')
+  return lanesRaw
+    .split(',')
+    .map((l) => l.trim())
+    .filter(Boolean)
 }
 
 /**

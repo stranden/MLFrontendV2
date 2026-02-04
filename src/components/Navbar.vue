@@ -15,8 +15,8 @@ const navItems = ref([
         items: [
           { name: 'Individual', href: '/broadcast/10m/individual' },
           { name: 'Scoreboard', href: '/broadcast/10m/individual/scoreboard' },
+          { name: 'Head-to-Head', href: '/broadcast/10m/individual/h2h' },
           { name: 'Mixed', href: '/broadcast/10m/mixed' },
-          { name: 'Team', href: '/broadcast/10m/team' },
         ],
       },
       {
