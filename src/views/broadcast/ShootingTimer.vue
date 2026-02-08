@@ -2,7 +2,7 @@
 import { useLiveData } from '@/composables/useLiveData.js'
 import { ref, watch, onUnmounted, computed } from 'vue'
 
-const { fetchedData } = useLiveData({ method: 'timer' })
+const { fetchedData } = useLiveData('timer')
 
 const timerData = ref([])
 let intervalId = null
