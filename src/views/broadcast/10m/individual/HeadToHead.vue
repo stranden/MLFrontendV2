@@ -22,7 +22,7 @@ const rightShooter = computed(() => {
 
 <template>
   <!-- Full screen head-to-head layout -->
-  <div class="h-full flex justify-center items-end pb-[5vh]">
+  <div class="h-full flex justify-center items-end pb-[7.5vh]">
     <div class="w-[90vw]">
       <!-- Two shooter split screen -->
       <div class="flex justify-between">

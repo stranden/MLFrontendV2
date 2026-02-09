@@ -149,7 +149,7 @@ watch(
 
 <template>
   <!-- Bottom graphic container - anchored to bottom -->
-  <div class="h-full flex justify-center items-end pb-[5vh]">
+  <div class="h-full flex justify-center items-end pb-[7.5vh]">
     <!-- Bottom graphic content area within TV safe area -->
     <div class="w-[90vw]">
       <!-- Shooters row -->
