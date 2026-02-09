@@ -1,1 +1,12 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  overflow: hidden;
+}
+
+#app {
+  background: transparent !important;
+}
