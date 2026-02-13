@@ -46,7 +46,7 @@ function getClubNationClass(flags) {
 
 <template>
   <div
-    class="relative bg-white/10 rounded-lg transition-all duration-300 ease-in-out"
+    class="relative bg-white/50 rounded-lg transition-all duration-300 ease-in-out"
     :class="[widthClass]"
   >
     <!-- TARGET COMPONENT -->
