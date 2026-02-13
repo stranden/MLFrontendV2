@@ -92,7 +92,7 @@ const status = computed(() => {
 <template>
   <div class="h-full w-full flex justify-center items-center">
     <div class="w-[60vw] h-[60vh] flex justify-center">
-      <div class="bg-gray-200/20 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
+      <div class="bg-gray-200/30 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
         <!-- Header section -->
         <div class="flex items-center w-full">
           <!-- LEFT: Logos -->
@@ -111,13 +111,13 @@ const status = computed(() => {
           <!-- CENTER: Title block -->
           <div class="flex-1 flex justify-between">
             <div class="flex flex-col text-left">
-              <span class="text-[3.0vmin] text-gray-350 font-bold truncate">
+              <span class="text-[3.0vmin] text-gray-300 font-bold truncate">
                 {{ title }}
               </span>
-              <span class="text-[2.5vmin] text-gray-250 font-medium truncate">
+              <span class="text-[2.5vmin] text-gray-200 font-medium truncate">
                 {{ discipline }}
               </span>
-              <span class="text-[2.0vmin] text-gray-250 font-normal">
+              <span class="text-[2.0vmin] text-gray-200 font-normal">
                 {{ status }}
               </span>
             </div>
