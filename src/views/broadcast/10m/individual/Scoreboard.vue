@@ -92,7 +92,7 @@ const status = computed(() => {
 <template>
   <div class="h-full w-full flex justify-center items-center">
     <div class="w-[60vw] h-[60vh] flex justify-center">
-      <div class="bg-gray-200/50 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
+      <div class="bg-gray-200/20 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
         <!-- Header section -->
         <div class="flex items-center w-full">
           <!-- LEFT: Logos -->
