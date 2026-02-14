@@ -26,15 +26,15 @@ export function formatName(name) {
   const fullNameWithTruncatedMiddleNames = `${lastName} ${firstName} ${truncatedMiddleNames}`.trim()
   const fullName = `${lastName} ${firstName} ${middleNames.join(' ')}`.trim()
 
-  if (lastName.length >= 18) {
+  if (lastName.length >= 17) {
     return lastName
   }
 
-  if (fullName.length >= 19 && fullNameWithTruncatedMiddleNames.length <= 17) {
+  if (fullName.length >= 18 && fullNameWithTruncatedMiddleNames.length <= 18) {
     return fullNameWithTruncatedMiddleNames
   }
 
-  if (fullNameWithTruncatedMiddleNames.length >= 17) {
+  if (fullNameWithTruncatedMiddleNames.length >= 18) {
     return truncatedFullName
   }
 
