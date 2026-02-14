@@ -30,11 +30,11 @@ export function formatName(name) {
     return lastName
   }
 
-  if (fullName.length >= 19 && fullNameWithTruncatedMiddleNames.length <= 19) {
+  if (fullName.length >= 19 && fullNameWithTruncatedMiddleNames.length <= 17) {
     return fullNameWithTruncatedMiddleNames
   }
 
-  if (fullNameWithTruncatedMiddleNames.length >= 19) {
+  if (fullNameWithTruncatedMiddleNames.length >= 17) {
     return truncatedFullName
   }
 
