@@ -14,25 +14,12 @@ const isOpen = ref(false)
   <li class="relative">
     <template v-if="item.groups">
       <div
-        class="dropdown rounded"
+        class="dropdown dropdown-hover hover:bg-base-300 rounded"
         @mouseenter="isOpen = true"
         @mouseleave="isOpen = false"
       >
-        <label class="cursor-pointer flex items-center rounded hover:bg-base-300 px-4 py-2">
+        <label class="cursor-pointer items-center rounded px-4 py-2">
           {{ item.name }}
-          <svg
-            class="ml-1 w-3 h-3 opacity-60"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M6 9l6 6 6-6"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
         </label>
 
         <div

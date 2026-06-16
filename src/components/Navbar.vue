@@ -16,16 +16,16 @@ const navItems = ref([
           { name: 'Individual', href: '/broadcast/10m/individual' },
           { name: 'Scoreboard', href: '/broadcast/10m/individual/scoreboard' },
           { name: 'Head-to-Head', href: '/broadcast/10m/individual/h2h' },
-          //{ name: 'Mixed', href: '/broadcast/10m/mixed' },
+          { name: 'Mixed', href: '/broadcast/10m/mixed' },
         ],
       },
-      //{
-      //  heading: '50m',
-      //  items: [
-      //    { name: 'Individual', href: '/broadcast/50m/individual' },
-      //    { name: 'Scoreboard', href: '/broadcast/50m/individual/scoreboard' },
-      //  ],
-      //},
+      {
+        heading: '50m',
+        items: [
+          { name: 'Individual', href: '/broadcast/50m/individual' },
+          { name: 'Scoreboard', href: '/broadcast/50m/individual/scoreboard' },
+        ],
+      },
       {
         heading: 'Shared',
         items: [{ name: 'Timer', href: '/broadcast/shootingtimer' }],
