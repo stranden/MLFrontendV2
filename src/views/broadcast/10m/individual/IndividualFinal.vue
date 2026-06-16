@@ -41,6 +41,8 @@ const stageInfo = computed(() => {
   const hasPendingElimination = shooters.some((s) => ['P', 'SP'].includes(s.flags))
   const isShootoffPending = shooters.some((s) => s.flags === 'SP')
   const isRegularPending = shooters.some((s) => s.flags === 'P')
+  const seriesTypeSight = shooters.some((s) => s.seriesType === 'sight')
+  const seriesTypeMatch = shooters.some((s) => s.seriesType === 'match')
   const seriesTypeShootoff = shooters.some((s) => s.seriesType === 'shootoff')
 
   // Defensive: empty array fallback for Math.max
@@ -159,7 +161,9 @@ watch(
           :key="index"
           :shooter="data"
           :widthClass="getShooterWidthClass(stageInfo.widthStage)"
-          :showFiveShotIndicators="stageInfo.fiveShotsSeries"
+          :showFiveShotIndicators="
+            stageInfo.stage === 'series' && stageInfo.fiveShotsSeries && data.seriesType === 'match'
+          "
         />
       </div>
     </div>
