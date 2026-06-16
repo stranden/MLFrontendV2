@@ -9,46 +9,71 @@ const { fetchedData, title, discipline, logos } = useLiveData('fp')
 const participantsWithNotes = computed(() => {
   if (!fetchedData.value) return []
 
-  // Step 1: Sort participants by totalScore descending, SP shooters last on ties
+  // Step 1: Sort participants by totalScore descending.
+  // On equal scores, place SP shooters after non-SP shooters so shoot-off losers come second.
   const participants = [...fetchedData.value].sort((a, b) => {
     const scoreDiff = parseFloat(b.totalScore) - parseFloat(a.totalScore)
     if (scoreDiff !== 0) return scoreDiff
 
-    if (a.flags.includes('SP') && !b.flags.includes('SP')) return 1
-    if (!a.flags.includes('SP') && b.flags.includes('SP')) return -1
+    const aFlags = a.flags || ''
+    const bFlags = b.flags || ''
+
+    const aHasSP = aFlags.includes('SP')
+    const bHasSP = bFlags.includes('SP')
+
+    if (aHasSP && !bHasSP) return 1
+    if (!aHasSP && bHasSP) return -1
     return 0
   })
 
-  // Step 2: Assign ranks
-  let rank = 1
+  // Step 2: Assign ranks.
+  // Normal ties use competition ranking: 1,2,3,4,4,6...
+  // If the lower shooter in a same-score pair has SP, the tie is resolved against them:
+  // 1,2 or 4,5 etc.
   for (let i = 0; i < participants.length; i++) {
-    if (i > 0 && participants[i].totalScore === participants[i - 1].totalScore) {
-      participants[i].rank = participants[i - 1].rank
-      if (participants[i - 1].rank === 1 && participants[i].flags.includes('SP')) {
-        participants[i].rank = 2
-      }
-    } else {
-      participants[i].rank = rank
+    if (i === 0) {
+      participants[i].rank = 1
+      continue
     }
-    rank = participants[i].rank + 1
+
+    const current = participants[i]
+    const previous = participants[i - 1]
+
+    const currentScore = parseFloat(current.totalScore)
+    const previousScore = parseFloat(previous.totalScore)
+    const sameScoreAsPrevious = currentScore === previousScore
+
+    const currentFlags = current.flags || ''
+    const currentHasSP = currentFlags.includes('SP')
+
+    const isResolvedShootOffLoser = sameScoreAsPrevious && currentHasSP
+
+    if (isResolvedShootOffLoser) {
+      current.rank = previous.rank + 1
+    } else if (sameScoreAsPrevious) {
+      current.rank = previous.rank
+    } else {
+      current.rank = i + 1
+    }
   }
 
   // Step 3: Calculate remaining shooters (for gold determination)
-  const remainingShooters = participants.filter(
-    (p) =>
-      !(p.flags || []).includes('E') &&
-      !(p.flags || []).includes('ES') &&
-      !(p.flags || []).includes('P'),
-  )
+  const remainingShooters = participants.filter((p) => {
+    const flags = p.flags || ''
+    return !flags.includes('E') && !flags.includes('ES') && !flags.includes('P')
+  })
 
   // Step 4: Assign notes to each participant
   const result = participants.map((participant, index) => {
-    const flags = participant.flags || []
+    const flags = participant.flags || ''
+    const hasT = flags.includes('T')
+    const isEliminated = flags.includes('E') || flags.includes('ES') || flags.includes('P')
+
     let notes = { type: 'none' }
 
     if (remainingShooters.length === 1 && remainingShooters[0] === participant) {
       notes = { type: 'medal', medal: 'gold', rank: 1, text: 'GOLD' }
-    } else if (flags.includes('E') || flags.includes('ES') || flags.includes('P')) {
+    } else if (isEliminated) {
       if (participant.rank === 2) {
         notes = { type: 'medal', medal: 'silver', rank: 2, text: 'SILVER' }
       } else if (participant.rank === 3) {
@@ -56,7 +81,7 @@ const participantsWithNotes = computed(() => {
       } else {
         notes = { type: 'medal', medal: 'place', rank: participant.rank, text: 'PLACE' }
       }
-    } else if (flags.includes('T')) {
+    } else if (hasT) {
       notes = { type: 'shootoff', text: 'SHOOT OFF' }
     } else if (index > 0) {
       const currentScore = parseFloat(participant.totalScore)
