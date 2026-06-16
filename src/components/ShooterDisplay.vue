@@ -112,13 +112,13 @@ function getFiveShotIndicators(shooter) {
 
     <div
       v-if="showFiveShotIndicators"
-      class="absolute bottom-[0.5vh] right-[0.4vw] flex items-center gap-[0.2vw] z-30"
+      class="absolute bottom-[0.45vh] right-[0.35vw] flex items-center gap-[0.25vw] z-30"
     >
       <span
         v-for="(isActive, index) in getFiveShotIndicators(shooter)"
         :key="index"
-        class="w-[0.45vw] h-[0.45vw] min-w-[0.45vw] rounded-full border border-white/60"
-        :class="isActive ? 'bg-yellow-300' : 'bg-blue-950/40'"
+        class="w-[0.7vw] h-[0.7vw] min-w-[0.7vw] rounded-full"
+        :class="isActive ? 'bg-[#ffd200]' : 'bg-[#00004b]'"
       />
     </div>
   </div>
