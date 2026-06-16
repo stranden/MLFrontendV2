@@ -21,25 +21,11 @@ function extractShotsForShooter(shooter) {
   return shooter?.shots?.map(({ x, y }) => ({ x, y })) || []
 }
 
-function getShooterClass(flags) {
-  return [
-    flags === 'E' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
-    flags === 'ES' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-gray-500/75',
-    flags === 'T' &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-green-700/50',
-    (flags === 'P' || flags === 'SP') &&
-      'after:content-[""] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-20 after:rounded-lg after:bg-red-700/50',
-  ]
-    .filter(Boolean)
-    .join(' ')
-}
-
 function getClubNationClass(flags) {
   return [
     flags === 'T' && 'z-20 rounded-b-lg bg-green-400',
     (flags === 'P' || flags === 'SP') && 'z-20 rounded-br-lg bg-red-400',
+    (flags === 'E' || flags === 'ES') && 'z-20 rounded-b-lg bg-gray-500',
   ]
 }
 </script>
