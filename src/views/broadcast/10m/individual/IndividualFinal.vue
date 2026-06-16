@@ -159,6 +159,7 @@ watch(
           :key="index"
           :shooter="data"
           :widthClass="getShooterWidthClass(stageInfo.widthStage)"
+          :showFiveShotIndicators="stageInfo.fiveShotsSeries"
         />
       </div>
     </div>

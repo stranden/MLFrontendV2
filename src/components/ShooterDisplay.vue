@@ -15,6 +15,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  showFiveShotIndicators: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 function extractShotsForShooter(shooter) {
@@ -27,6 +31,11 @@ function getClubNationClass(flags) {
     (flags === 'P' || flags === 'SP') && 'z-20 rounded-br-lg bg-red-400',
     (flags === 'E' || flags === 'ES') && 'z-20 rounded-b-lg bg-gray-500',
   ]
+}
+
+function getFiveShotIndicators(shooter) {
+  const shotCount = Math.min(shooter?.shots?.length || 0, 5)
+  return Array.from({ length: 5 }, (_, index) => index < shotCount)
 }
 </script>
 
@@ -99,6 +108,18 @@ function getClubNationClass(flags) {
       /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">{{
         utils.parseClubData(shooter.club).club
       }}</span>
+    </div>
+
+    <div
+      v-if="showFiveShotIndicators"
+      class="absolute bottom-[0.5vh] right-[0.4vw] flex items-center gap-[0.2vw] z-30"
+    >
+      <span
+        v-for="(isActive, index) in getFiveShotIndicators(shooter)"
+        :key="index"
+        class="w-[0.45vw] h-[0.45vw] min-w-[0.45vw] rounded-full border border-white/60"
+        :class="isActive ? 'bg-yellow-300' : 'bg-blue-950/40'"
+      />
     </div>
   </div>
 </template>
