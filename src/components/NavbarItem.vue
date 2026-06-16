@@ -1,18 +1,24 @@
 <script setup>
+import { ref } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 
 const props = defineProps({
   item: { type: Object, required: true },
 })
+
 const route = useRoute()
+const isOpen = ref(false)
 </script>
 
 <template>
   <li class="relative">
-    <!-- Mega menu dropdown with horizontal grouping and wrapping -->
     <template v-if="item.groups">
-      <div class="dropdown dropdown-hover hover:bg-base-300 rounded">
-        <label tabindex="0" class="cursor-pointer flex items-center rounded">
+      <div
+        class="dropdown rounded"
+        @mouseenter="isOpen = true"
+        @mouseleave="isOpen = false"
+      >
+        <label class="cursor-pointer flex items-center rounded hover:bg-base-300 px-4 py-2">
           {{ item.name }}
           <svg
             class="ml-1 w-3 h-3 opacity-60"
@@ -28,8 +34,9 @@ const route = useRoute()
             />
           </svg>
         </label>
+
         <div
-          tabindex="0"
+          v-show="isOpen"
           class="dropdown-content bg-base-100 rounded-box shadow mt-2 p-4 w-[400px] left-0 flex flex-wrap gap-4 z-30"
           role="menu"
         >
@@ -58,14 +65,15 @@ const route = useRoute()
         </div>
       </div>
     </template>
-    <!-- Regular root nav link -->
+
     <template v-else>
       <RouterLink
         :to="item.href"
         class="hover:bg-base-300 px-4 py-2 rounded"
         :class="route.path === item.href ? 'font-semibold' : ''"
-        >{{ item.name }}</RouterLink
       >
+        {{ item.name }}
+      </RouterLink>
     </template>
   </li>
 </template>
