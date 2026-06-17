@@ -80,8 +80,8 @@ export default {
 <style scoped>
 .target {
   position: absolute;
-  top: -2.5vh;
-  left: -1.25vw;
+  top: -1.75vh;
+  left: -1vw;
   width: 5.5vw; /* Adjust size as needed */
   height: 5.5vw; /* Adjust size as needed */
   border-radius: 50%; /* Makes it a circle */
