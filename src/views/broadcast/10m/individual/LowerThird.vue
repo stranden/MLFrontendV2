@@ -22,8 +22,7 @@ const selectedLane = computed(() => {
 
 const qualificationScore = computed(() => {
   const scoreParam = getSearchParams().get('score')
-  const score = Number(scoreParam)
-  return Number.isFinite(score) ? score.toFixed(1) : null
+  return scoreParam ? scoreParam : null
 })
 
 const customNote = computed(() => {
