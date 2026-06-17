@@ -28,7 +28,7 @@ const qualificationScore = computed(() => {
 
 const customNote = computed(() => {
   const noteParam = getSearchParams().get('note')
-  return noteParam ? noteParam.toUpperCase() : null
+  return noteParam ? noteParam : null
 })
 
 const isEliminationMode = computed(() => selectedRank.value !== null)
@@ -94,7 +94,8 @@ const displayData = computed(() => {
     leftLabelClass,
     note,
     flagUrl: utils.countryFlag(alpha2, '4x3'),
-    formattedName: utils.formatName(shooter.name),
+    //formattedName: utils.formatName(shooter.name),
+    formattedName: shooter.name,
     displayScore: isPresentationMode.value ? qualificationScore.value : shooter.totalScore,
   }
 })
@@ -106,7 +107,7 @@ const displayData = computed(() => {
       <div v-if="displayData" class="flex items-stretch shadow-lg max-w-[48vw] min-w-[30vw]">
         <!-- RANK / LANE -->
         <div
-          class="bg-blue-900/65 px-[1.1vw] py-[0.85vh] flex items-center justify-center rounded-l-[1.2vmin] min-w-[4vw]"
+          class="bg-blue-900/75 flex items-center justify-center rounded-l-[1.2vmin] min-w-[4vw]"
           :class="displayData.leftLabelClass"
         >
           <span class="font-bold text-[2.7vmin] leading-none whitespace-nowrap">
@@ -118,7 +119,7 @@ const displayData = computed(() => {
         <div class="flex flex-col min-w-0 flex-1">
           <!-- TOP ROW -->
           <div
-            class="bg-blue-900/80 text-gray-200 flex items-center justify-between gap-[1vw] px-[1.1vw] py-[0.7vh] rounded-tr-[1.2vmin] min-w-0"
+            class="bg-blue-900/80 text-gray-200 flex items-center justify-between gap-[1vw] pr-[1vw] py-[0.7vh] rounded-tr-[1.2vmin] min-w-0"
           >
             <span class="font-bold text-[1.85vmin] leading-none truncate min-w-0 flex-1">
               {{ displayData.formattedName }}
@@ -130,22 +131,22 @@ const displayData = computed(() => {
 
           <!-- BOTTOM ROW -->
           <div
-            class="bg-gray-500/80 text-gray-200 flex items-center justify-between gap-[1vw] px-[0.9vw] py-[0.65vh] rounded-br-[1.2vmin] min-w-0"
+            class="bg-gray-200/80 text-gray-900 flex items-center justify-between gap-[0.5vw] pr-[1vw] rounded-br-[1.2vmin] min-w-0"
           >
-            <div class="flex items-center gap-[0.65vw] min-w-0 flex-1">
-              <img
-                :src="displayData.flagUrl"
-                :alt="`${displayData.nation} flag`"
-                class="h-[2vmin] rounded-[0.25vmin] shrink-0"
-              />
-              <span class="font-medium text-[1.35vmin] leading-none truncate">
+            <img
+              :src="displayData.flagUrl"
+              :alt="`${displayData.nation} flag`"
+              class="h-[2.25vmin] shrink-0"
+            />
+            <div class="flex items-center min-w-0 flex-1">
+              <span class="font-bold text-[1.35vmin] leading-none">
                 {{ displayData.nation }}
               </span>
             </div>
 
             <span
               v-if="displayData.note"
-              class="font-bold text-[1.35vmin] leading-none uppercase whitespace-nowrap shrink-0 text-gray-300"
+              class="font-bold text-[1.35vmin] leading-none whitespace-nowrap shrink-0 text-gray-900"
             >
               {{ displayData.note }}
             </span>
