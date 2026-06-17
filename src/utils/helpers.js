@@ -17,7 +17,7 @@ export function parseClubData(clubString) {
     const club = parts.slice(1).join(', ').trim()
     return {
       nation: nation.toUpperCase(),
-      club: club.toUpperCase(),
+      club: club,
     }
   } else {
     const firstWord = clubString.split(' ')[0]
