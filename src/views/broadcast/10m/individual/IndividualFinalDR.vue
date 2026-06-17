@@ -162,6 +162,9 @@ watch(
           :key="index"
           :shooter="data"
           :widthClass="getShooterWidthClass(stageInfo.widthStage)"
+          :showFiveShotIndicators="
+            stageInfo.stage === 'series' && stageInfo.fiveShotsSeries && data.seriesType === 'match'
+          "
         />
       </div>
     </div>
