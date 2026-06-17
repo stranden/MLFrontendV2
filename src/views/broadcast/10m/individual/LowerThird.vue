@@ -37,7 +37,11 @@ const selectedShooter = computed(() => {
   }
 
   if (isPresentationMode.value) {
-    return fetchedData.value.find((shooter) => String(shooter.fp).toUpperCase() === selectedLane.value) || null
+    return (
+      fetchedData.value.find(
+        (shooter) => String(shooter.fp).toUpperCase() === selectedLane.value,
+      ) || null
+    )
   }
 
   return null
@@ -51,17 +55,17 @@ const displayData = computed(() => {
   const flags = shooter.flags || ''
   const hasShootOff = flags.includes('SP') || flags.includes('ES')
 
-  let leftLabel = `R${rank}`
+  let leftLabel = `${rank}`
   let leftLabelClass = 'text-gray-200'
 
   if (rank === 1) {
-    leftLabel = 'GOLD'
+    //leftLabel = 'GOLD'
     leftLabelClass = 'text-[#FFD700]'
   } else if (rank === 2) {
-    leftLabel = 'SILVER'
+    //leftLabel = 'SILVER'
     leftLabelClass = 'text-[#C0C0C0]'
   } else if (rank === 3) {
-    leftLabel = 'BRONZE'
+    //leftLabel = 'BRONZE'
     leftLabelClass = 'text-[#CD7F32]'
   }
 
@@ -90,28 +94,33 @@ const displayData = computed(() => {
 <template>
   <div class="h-full w-full flex justify-center items-end pb-[7.5vh]">
     <div class="w-[90vw] flex justify-center items-end">
-      <div v-if="displayData" class="flex items-stretch shadow-lg max-w-[48vw] min-w-[36vw]">
+      <div v-if="displayData" class="flex items-stretch shadow-lg max-w-[48vw] min-w-[30vw]">
+        <!-- RANK / LANE -->
         <div
-          class="bg-blue-950 px-[1.2vw] py-[1.1vh] flex items-center justify-center rounded-l-[1.2vmin] min-w-[5.5vw]"
+          class="bg-blue-900/80 px-[1.2vw] py-[1.1vh] flex items-center justify-center rounded-l-[1.2vmin] min-w-[4vw]"
           :class="displayData.leftLabelClass"
         >
-          <span class="font-bold text-[1.8vmin] leading-none whitespace-nowrap">
+          <span class="font-bold text-[3vmin] leading-none whitespace-nowrap">
             {{ displayData.leftLabel }}
           </span>
         </div>
 
+        <!-- MAIN CONTENT -->
         <div class="flex flex-col min-w-0 flex-1">
+          <!-- TOP ROW -->
           <div class="flex min-w-0">
+            <!-- NAME -->
             <div
-              class="bg-blue-950 text-gray-200 px-[1.2vw] py-[0.9vh] flex items-center min-w-0 flex-1"
+              class="bg-blue-900/80 text-gray-200 px-[1.2vw] py-[0.9vh] flex items-center min-w-0 flex-1"
             >
               <span class="font-bold text-[2.0vmin] leading-none truncate">
                 {{ displayData.formattedName }}
               </span>
             </div>
 
+            <!-- SCORE -->
             <div
-              class="bg-blue-950 text-gray-200 px-[1vw] py-[0.9vh] flex items-center justify-end min-w-[7.5vw]"
+              class="bg-blue-900/80 text-gray-200 px-[1vw] py-[0.9vh] flex items-center justify-end min-w-[7.5vw] rounded-tr-[1.2vmin]"
             >
               <span class="font-bold text-[1.9vmin] leading-none whitespace-nowrap">
                 {{ displayData.displayScore }}
@@ -119,9 +128,11 @@ const displayData = computed(() => {
             </div>
           </div>
 
+          <!-- BOTTOM ROW -->
           <div class="flex min-w-0">
+            <!-- NATION / CLUB -->
             <div
-              class="bg-gray-500/80 text-gray-200 px-[1vw] py-[0.8vh] flex items-center gap-[0.7vw] min-w-0 flex-1 rounded-br-[1.2vmin]"
+              class="bg-gray-200/80 text-gray-200 px-[1vw] py-[0.8vh] flex items-center gap-[0.7vw] min-w-0 flex-1 rounded-br-[1.2vmin]"
             >
               <img
                 :src="displayData.flagUrl"
@@ -133,6 +144,7 @@ const displayData = computed(() => {
               </span>
             </div>
 
+            <!-- SHOOT-OFF INDICATOR -->
             <div
               v-if="displayData.hasShootOff && isEliminationMode"
               class="bg-gray-500/80 text-gray-200 px-[0.9vw] py-[0.8vh] flex items-center justify-center min-w-[4.8vw] rounded-br-[1.2vmin]"
