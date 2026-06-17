@@ -26,6 +26,11 @@ const qualificationScore = computed(() => {
   return Number.isFinite(score) ? score.toFixed(1) : null
 })
 
+const customNote = computed(() => {
+  const noteParam = getSearchParams().get('note')
+  return noteParam ? noteParam.toUpperCase() : null
+})
+
 const isEliminationMode = computed(() => selectedRank.value !== null)
 const isPresentationMode = computed(() => !isEliminationMode.value && selectedLane.value !== null)
 
@@ -59,19 +64,23 @@ const displayData = computed(() => {
   let leftLabelClass = 'text-gray-200'
 
   if (rank === 1) {
-    //leftLabel = 'GOLD'
     leftLabelClass = 'text-[#FFD700]'
   } else if (rank === 2) {
-    //leftLabel = 'SILVER'
     leftLabelClass = 'text-[#C0C0C0]'
   } else if (rank === 3) {
-    //leftLabel = 'BRONZE'
     leftLabelClass = 'text-[#CD7F32]'
   }
 
   if (isPresentationMode.value) {
     leftLabel = selectedLane.value
     leftLabelClass = 'text-gray-200'
+  }
+
+  let note = ''
+  if (customNote.value) {
+    note = customNote.value
+  } else if (isEliminationMode.value && hasShootOff) {
+    note = 'SO'
   }
 
   const nation = utils.parseClubData(shooter.club).nation
@@ -81,9 +90,9 @@ const displayData = computed(() => {
     ...shooter,
     rank,
     nation,
-    hasShootOff,
     leftLabel,
     leftLabelClass,
+    note,
     flagUrl: utils.countryFlag(alpha2, '4x3'),
     formattedName: utils.formatName(shooter.name),
     displayScore: isPresentationMode.value ? qualificationScore.value : shooter.totalScore,
@@ -108,32 +117,22 @@ const displayData = computed(() => {
         <!-- MAIN CONTENT -->
         <div class="flex flex-col min-w-0 flex-1">
           <!-- TOP ROW -->
-          <div class="flex min-w-0">
-            <!-- NAME -->
-            <div
-              class="bg-blue-900/80 text-gray-200 px-[1.1vw] py-[0.7vh] flex items-center min-w-0 flex-1"
-            >
-              <span class="font-bold text-[1.85vmin] leading-none truncate">
-                {{ displayData.formattedName }}
-              </span>
-            </div>
-
-            <!-- SCORE -->
-            <div
-              class="bg-blue-900/80 text-gray-200 px-[0.9vw] py-[0.7vh] flex items-center justify-end min-w-[7.2vw] rounded-tr-[1.2vmin]"
-            >
-              <span class="font-bold text-[1.75vmin] leading-none whitespace-nowrap">
-                {{ displayData.displayScore }}
-              </span>
-            </div>
+          <div
+            class="bg-blue-900/80 text-gray-200 flex items-center justify-between gap-[1vw] px-[1.1vw] py-[0.7vh] rounded-tr-[1.2vmin] min-w-0"
+          >
+            <span class="font-bold text-[1.85vmin] leading-none truncate min-w-0 flex-1">
+              {{ displayData.formattedName }}
+            </span>
+            <span class="font-bold text-[1.75vmin] leading-none whitespace-nowrap shrink-0">
+              {{ displayData.displayScore }}
+            </span>
           </div>
 
           <!-- BOTTOM ROW -->
-          <div class="flex min-w-0">
-            <!-- NATION / CLUB -->
-            <div
-              class="bg-gray-200/80 text-gray-200 px-[0.9vw] py-[0.65vh] flex items-center gap-[0.65vw] min-w-0 flex-1 rounded-br-[1.2vmin]"
-            >
+          <div
+            class="bg-gray-500/80 text-gray-200 flex items-center justify-between gap-[1vw] px-[0.9vw] py-[0.65vh] rounded-br-[1.2vmin] min-w-0"
+          >
+            <div class="flex items-center gap-[0.65vw] min-w-0 flex-1">
               <img
                 :src="displayData.flagUrl"
                 :alt="`${displayData.nation} flag`"
@@ -144,15 +143,12 @@ const displayData = computed(() => {
               </span>
             </div>
 
-            <!-- SHOOT-OFF INDICATOR -->
-            <div
-              v-if="displayData.hasShootOff && isEliminationMode"
-              class="bg-gray-500/80 text-gray-200 px-[0.85vw] py-[0.65vh] flex items-center justify-center min-w-[4.4vw] rounded-br-[1.2vmin]"
+            <span
+              v-if="displayData.note"
+              class="font-bold text-[1.35vmin] leading-none uppercase whitespace-nowrap shrink-0 text-gray-300"
             >
-              <span class="font-bold text-[1.35vmin] leading-none uppercase whitespace-nowrap">
-                SO
-              </span>
-            </div>
+              {{ displayData.note }}
+            </span>
           </div>
         </div>
       </div>
