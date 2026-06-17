@@ -13,7 +13,8 @@ export function parseClubData(clubString) {
 
   if (parts.length >= 2) {
     const nation = parts[0]
-    const club = parts.slice(1).join(', ').substring(0, 23).trim()
+    //const club = parts.slice(1).join(', ').substring(0, 23).trim()
+    const club = parts.slice(1).join(', ').trim()
     return {
       nation: nation.toUpperCase(),
       club: club.toUpperCase(),

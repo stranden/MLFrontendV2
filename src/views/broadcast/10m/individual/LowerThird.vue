@@ -84,11 +84,20 @@ const displayData = computed(() => {
 
   const nation = utils.parseClubData(shooter.club).nation
   const alpha2 = utils.convertIocToAlpha2(nation)
+  const fullNation = utils.convertIocToFull(nation)
+  let club = utils.parseClubData(shooter.club).club
+
+  if (club === nation) {
+    // override club with full nation name for better display
+    club = fullNation.toUpperCase()
+  }
 
   return {
     ...shooter,
     rank,
     nation,
+    fullNation,
+    club,
     leftLabel,
     leftLabelClass,
     note,
@@ -139,7 +148,7 @@ const displayData = computed(() => {
             />
             <div class="flex items-center min-w-0 flex-1">
               <span class="font-bold text-[1.35vmin] leading-none">
-                {{ displayData.nation }}
+                {{ displayData.club }}
               </span>
             </div>
 
