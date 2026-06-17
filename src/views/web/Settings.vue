@@ -21,7 +21,7 @@ const availableLogos = Object.keys(logoModules).map((path) => {
   }
 })
 
-// Available lanes for Head-to-Head
+// Available lanes for Head-to-Head and Lower Third
 const availableLanes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
 // Define all configurable parameters
@@ -34,10 +34,15 @@ const settings = ref({
   logos: [],
   'lane-left': 'A',
   'lane-right': 'B',
+  'lowerthird-rank': '',
+  'lowerthird-lane': 'A',
+  'lowerthird-score': '',
+  'lowerthird-note': '',
 })
 
 // Computed to check if we're in test mode
 const isTestMode = computed(() => !!settings.value.testdata)
+const isLowerThirdPresentationMode = computed(() => !settings.value['lowerthird-rank'])
 
 // Load current settings from localStorage on mount
 onMounted(() => {
@@ -48,6 +53,10 @@ onMounted(() => {
   settings.value.discipline = localStorage.getItem('discipline') || ''
   settings.value['lane-left'] = localStorage.getItem('lane-left') || 'A'
   settings.value['lane-right'] = localStorage.getItem('lane-right') || 'B'
+  settings.value['lowerthird-rank'] = localStorage.getItem('lowerthird-rank') || ''
+  settings.value['lowerthird-lane'] = localStorage.getItem('lowerthird-lane') || 'A'
+  settings.value['lowerthird-score'] = localStorage.getItem('lowerthird-score') || ''
+  settings.value['lowerthird-note'] = localStorage.getItem('lowerthird-note') || ''
 
   const logosStr = localStorage.getItem('logos') || ''
   settings.value.logos = logosStr ? logosStr.split(',').filter(Boolean) : []
@@ -109,6 +118,30 @@ function saveSettings() {
     localStorage.setItem('lane-right', settings.value['lane-right'])
   } else {
     localStorage.removeItem('lane-right')
+  }
+
+  if (settings.value['lowerthird-rank']) {
+    localStorage.setItem('lowerthird-rank', settings.value['lowerthird-rank'])
+  } else {
+    localStorage.removeItem('lowerthird-rank')
+  }
+
+  if (settings.value['lowerthird-lane']) {
+    localStorage.setItem('lowerthird-lane', settings.value['lowerthird-lane'])
+  } else {
+    localStorage.removeItem('lowerthird-lane')
+  }
+
+  if (settings.value['lowerthird-score']) {
+    localStorage.setItem('lowerthird-score', settings.value['lowerthird-score'])
+  } else {
+    localStorage.removeItem('lowerthird-score')
+  }
+
+  if (settings.value['lowerthird-note']) {
+    localStorage.setItem('lowerthird-note', settings.value['lowerthird-note'])
+  } else {
+    localStorage.removeItem('lowerthird-note')
   }
 
   showSaveToast.value = true
@@ -174,6 +207,27 @@ function generateUrl(basePath, type) {
       params.set('logos', getLogoFilenames(settings.value.logos).join(','))
     }
   }
+  // Lower third: mlrange/testdata + elimination or presentation params
+  else if (type === 'lowerthird') {
+    if (isTestMode.value && settings.value.testdata) {
+      params.set('testdata', settings.value.testdata)
+    } else if (settings.value.mlrange) {
+      params.set('mlrange', settings.value.mlrange)
+    }
+
+    if (settings.value['lowerthird-rank']) {
+      params.set('rank', settings.value['lowerthird-rank'])
+    } else if (settings.value['lowerthird-lane']) {
+      params.set('lane', settings.value['lowerthird-lane'])
+      if (settings.value['lowerthird-score']) {
+        params.set('score', settings.value['lowerthird-score'])
+      }
+    }
+
+    if (settings.value['lowerthird-note']) {
+      params.set('note', settings.value['lowerthird-note'])
+    }
+  }
 
   // Convert to string and replace + with %20 for CasparCG compatibility
   const queryString = params.toString().replace(/\+/g, '%20')
@@ -186,6 +240,7 @@ const broadcastUrls = [
   { name: '10m Individual', path: '/broadcast/10m/individual/', type: 'individual' },
   { name: '10m Head-to-Head', path: '/broadcast/10m/individual/h2h/', type: 'h2h' },
   { name: '10m Scoreboard', path: '/broadcast/10m/individual/scoreboard/', type: 'scoreboard' },
+  { name: '10m Lower Third', path: '/broadcast/10m/individual/LowerThird/', type: 'lowerthird' },
   { name: '10m Mixed', path: '/broadcast/10m/mixed/', type: 'individual' },
   //{ name: '10m Team', path: '/broadcast/10m/team/', type: 'individual' },
   //{ name: '50m Individual', path: '/broadcast/50m/individual/', type: 'individual' },
@@ -218,7 +273,7 @@ async function copyToClipboard(text, path) {
     <div class="container mx-auto px-4 py-8">
       <h1 class="text-3xl font-bold mb-8">Broadcast settings</h1>
 
-      <div class="grid lg:grid-cols-3 gap-6">
+      <div class="grid lg:grid-cols-4 gap-6">
         <!-- Data Source Card -->
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
@@ -241,7 +296,6 @@ async function copyToClipboard(text, path) {
               <span v-if="isTestMode" class="badge badge-warning">Test Mode</span>
             </h2>
 
-            <!-- Test Mode Toggle -->
             <div class="form-control">
               <label class="label cursor-pointer justify-start gap-4">
                 <input
@@ -258,7 +312,6 @@ async function copyToClipboard(text, path) {
               </label>
             </div>
 
-            <!-- Test Data File Dropdown (shown when test mode is on) -->
             <div v-if="isTestMode" class="form-control w-full">
               <label class="label">
                 <span class="label-text">Test Data File</span>
@@ -271,7 +324,6 @@ async function copyToClipboard(text, path) {
               </select>
             </div>
 
-            <!-- MLRange Settings (shown when test mode is off) -->
             <template v-else>
               <div class="form-control w-full">
                 <label class="label">
@@ -315,7 +367,7 @@ async function copyToClipboard(text, path) {
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-[...]"
                 />
               </svg>
               Scoreboard
@@ -345,7 +397,6 @@ async function copyToClipboard(text, path) {
               />
             </div>
 
-            <!-- Logos Multi-Select -->
             <div class="form-control w-full">
               <label class="label">
                 <span class="label-text">Logos</span>
@@ -384,7 +435,6 @@ async function copyToClipboard(text, path) {
             </h2>
 
             <div class="grid grid-cols-1 gap-4">
-              <!-- Left Lane -->
               <div class="form-control w-full">
                 <label class="label">
                   <span class="label-text">Left Lane</span>
@@ -396,7 +446,6 @@ async function copyToClipboard(text, path) {
                 </select>
               </div>
 
-              <!-- Right Lane -->
               <div class="form-control w-full">
                 <label class="label">
                   <span class="label-text">Right Lane</span>
@@ -409,7 +458,6 @@ async function copyToClipboard(text, path) {
               </div>
             </div>
 
-            <!-- Warning if same lane selected -->
             <div v-if="settings['lane-left'] === settings['lane-right']" class="alert alert-warning mt-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -428,9 +476,85 @@ async function copyToClipboard(text, path) {
             </div>
           </div>
         </div>
+
+        <!-- Lower Third Settings Card -->
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title">Lower Third</h2>
+
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Elimination Rank</span>
+              </label>
+              <input
+                v-model="settings['lowerthird-rank']"
+                type="number"
+                min="1"
+                placeholder="Leave empty for presentation mode"
+                class="input input-bordered w-full"
+              />
+              <label class="label">
+                <span class="label-text-alt">If set, lower third uses elimination mode</span>
+              </label>
+            </div>
+
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Presentation Lane</span>
+              </label>
+              <select
+                v-model="settings['lowerthird-lane']"
+                class="select select-bordered w-full"
+                :disabled="!!settings['lowerthird-rank']"
+              >
+                <option v-for="lane in availableLanes" :key="lane" :value="lane">
+                  Lane {{ lane }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Presentation Score</span>
+              </label>
+              <input
+                v-model="settings['lowerthird-score']"
+                type="text"
+                placeholder="e.g., 634.1"
+                class="input input-bordered w-full"
+                :disabled="!!settings['lowerthird-rank']"
+              />
+            </div>
+
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Note</span>
+              </label>
+              <input
+                v-model="settings['lowerthird-note']"
+                type="text"
+                placeholder="e.g., QUAL or SO"
+                class="input input-bordered w-full"
+              />
+              <label class="label">
+                <span class="label-text-alt">Optional. Overrides default SO note.</span>
+              </label>
+            </div>
+
+            <div class="alert alert-info mt-2">
+              <span>
+                Mode:
+                {{
+                  isLowerThirdPresentationMode
+                    ? 'Presentation (lane + optional score)'
+                    : 'Elimination (rank from API)'
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Save Button -->
       <div class="mt-6">
         <button @click="saveSettings" class="btn btn-primary">
           <svg
@@ -451,7 +575,6 @@ async function copyToClipboard(text, path) {
         </button>
       </div>
 
-      <!-- Generated URLs Card -->
       <div class="card bg-base-100 shadow-xl mt-8">
         <div class="card-body">
           <h2 class="card-title">
@@ -499,6 +622,16 @@ async function copyToClipboard(text, path) {
                       class="badge badge-info badge-sm ml-2"
                       >{{ settings['lane-left'] }} vs {{ settings['lane-right'] }}</span
                     >
+                    <span
+                      v-if="item.type === 'lowerthird'"
+                      class="badge badge-secondary badge-sm ml-2"
+                    >
+                      {{
+                        isLowerThirdPresentationMode
+                          ? `Lane ${settings['lowerthird-lane']}`
+                          : `Rank ${settings['lowerthird-rank']}`
+                      }}
+                    </span>
                   </td>
                   <td>
                     <code class="text-xs bg-base-200 px-2 py-1 rounded break-all">
@@ -522,7 +655,6 @@ async function copyToClipboard(text, path) {
       </div>
     </div>
 
-    <!-- Toast notification -->
     <div v-if="showSaveToast" class="toast toast-end">
       <div class="alert alert-success">
         <span>Settings saved successfully!</span>

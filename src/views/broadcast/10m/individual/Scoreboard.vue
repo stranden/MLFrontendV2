@@ -153,7 +153,7 @@ const status = computed(() => {
           <div
             v-for="participant in participantsWithNotes"
             :key="participant.name"
-            class="grid grid-cols-[1fr_3fr_1fr_1fr] items-center gap-[2vmin] p-[1vmin] my-[0.3vmin] border-b border-gray-300 last:border-b-0"
+            class="grid grid-cols-[0.5fr_3fr_1fr_1fr] items-center gap-[2vmin] p-[1vmin] my-[0.3vmin] border-b border-gray-300 last:border-b-0"
           >
             <!-- Rank -->
             <div
@@ -175,7 +175,8 @@ const status = computed(() => {
                 class="rounded-l-[1.5vmin] h-[3vmin]"
               />
               <span class="font-bold text-[2vmin] flex">
-                {{ utils.formatName(participant.name) }}
+                <!--{{ utils.formatName(participant.name) }}-->
+                {{ participant.name }}
               </span>
             </div>
 
