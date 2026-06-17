@@ -51,18 +51,23 @@ const displayData = computed(() => {
   const flags = shooter.flags || ''
   const hasShootOff = flags.includes('SP') || flags.includes('ES')
 
-  let medalText = null
-  let medalClass = 'text-gray-500'
+  let leftLabel = `R${rank}`
+  let leftLabelClass = 'text-gray-200'
 
   if (rank === 1) {
-    medalText = 'GOLD'
-    medalClass = 'text-[#FFD700]'
+    leftLabel = 'GOLD'
+    leftLabelClass = 'text-[#FFD700]'
   } else if (rank === 2) {
-    medalText = 'SILVER'
-    medalClass = 'text-[#C0C0C0]'
+    leftLabel = 'SILVER'
+    leftLabelClass = 'text-[#C0C0C0]'
   } else if (rank === 3) {
-    medalText = 'BRONZE'
-    medalClass = 'text-[#CD7F32]'
+    leftLabel = 'BRONZE'
+    leftLabelClass = 'text-[#CD7F32]'
+  }
+
+  if (isPresentationMode.value) {
+    leftLabel = selectedLane.value
+    leftLabelClass = 'text-gray-200'
   }
 
   const nation = utils.parseClubData(shooter.club).nation
@@ -71,10 +76,10 @@ const displayData = computed(() => {
   return {
     ...shooter,
     rank,
-    medalText,
-    medalClass,
     nation,
     hasShootOff,
+    leftLabel,
+    leftLabelClass,
     flagUrl: utils.countryFlag(alpha2, '4x3'),
     formattedName: utils.formatName(shooter.name),
     displayScore: isPresentationMode.value ? qualificationScore.value : shooter.totalScore,
@@ -85,59 +90,58 @@ const displayData = computed(() => {
 <template>
   <div class="h-full w-full flex justify-center items-end pb-[7.5vh]">
     <div class="w-[90vw] flex justify-center items-end">
-      <div
-        v-if="displayData"
-        class="flex items-stretch rounded-[1.5vmin] overflow-hidden shadow-lg min-w-[72vw] max-w-[82vw]"
-      >
-        <div class="bg-blue-950 text-gray-200 px-[2.5vw] py-[1.6vh] min-w-[30vw] flex items-center">
-          <span class="font-bold text-[3.2vmin] leading-none truncate">
-            {{ displayData.formattedName }}
-          </span>
-        </div>
-
-        <div class="bg-gray-500/80 px-[1.5vw] py-[1.3vh] flex items-center gap-[1vw] min-w-[18vw]">
-          <img
-            :src="displayData.flagUrl"
-            :alt="`${displayData.nation} flag`"
-            class="h-[4.8vmin] rounded-[0.4vmin]"
-          />
-          <span class="text-gray-200 font-semibold text-[2.4vmin] leading-none truncate">
-            {{ displayData.nation }}
-          </span>
-        </div>
-
+      <div v-if="displayData" class="flex items-stretch shadow-lg max-w-[48vw] min-w-[36vw]">
         <div
-          v-if="isPresentationMode"
-          class="bg-gray-500/80 text-gray-200 px-[1.5vw] py-[1.3vh] flex items-center justify-center min-w-[8vw]"
+          class="bg-blue-950 px-[1.2vw] py-[1.1vh] flex items-center justify-center rounded-l-[1.2vmin] min-w-[5.5vw]"
+          :class="displayData.leftLabelClass"
         >
-          <span class="font-bold text-[2.5vmin] leading-none uppercase">
-            {{ selectedLane }}
+          <span class="font-bold text-[1.8vmin] leading-none whitespace-nowrap">
+            {{ displayData.leftLabel }}
           </span>
         </div>
 
-        <div
-          class="bg-blue-950 text-gray-200 px-[1.8vw] py-[1.3vh] flex items-center justify-center min-w-[12vw]"
-        >
-          <span class="font-bold text-[2.8vmin] leading-none">
-            {{ displayData.displayScore }}
-          </span>
-        </div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <div class="flex min-w-0">
+            <div
+              class="bg-blue-950 text-gray-200 px-[1.2vw] py-[0.9vh] flex items-center min-w-0 flex-1"
+            >
+              <span class="font-bold text-[2.0vmin] leading-none truncate">
+                {{ displayData.formattedName }}
+              </span>
+            </div>
 
-        <div
-          v-if="isEliminationMode"
-          class="bg-blue-950 px-[1.8vw] py-[1.3vh] flex items-center justify-center min-w-[14vw]"
-          :class="displayData.medalText ? displayData.medalClass : 'text-gray-200'"
-        >
-          <span class="font-bold text-[2.8vmin] leading-none">
-            {{ displayData.medalText || `RANK ${displayData.rank}` }}
-          </span>
-        </div>
+            <div
+              class="bg-blue-950 text-gray-200 px-[1vw] py-[0.9vh] flex items-center justify-end min-w-[7.5vw]"
+            >
+              <span class="font-bold text-[1.9vmin] leading-none whitespace-nowrap">
+                {{ displayData.displayScore }}
+              </span>
+            </div>
+          </div>
 
-        <div
-          v-if="displayData.hasShootOff && isEliminationMode"
-          class="bg-gray-500/80 text-gray-200 px-[1.8vw] py-[1.3vh] flex items-center justify-center min-w-[10vw]"
-        >
-          <span class="font-bold text-[2.4vmin] leading-none uppercase">SO</span>
+          <div class="flex min-w-0">
+            <div
+              class="bg-gray-500/80 text-gray-200 px-[1vw] py-[0.8vh] flex items-center gap-[0.7vw] min-w-0 flex-1 rounded-br-[1.2vmin]"
+            >
+              <img
+                :src="displayData.flagUrl"
+                :alt="`${displayData.nation} flag`"
+                class="h-[2.2vmin] rounded-[0.25vmin] shrink-0"
+              />
+              <span class="font-medium text-[1.5vmin] leading-none truncate">
+                {{ displayData.nation }}
+              </span>
+            </div>
+
+            <div
+              v-if="displayData.hasShootOff && isEliminationMode"
+              class="bg-gray-500/80 text-gray-200 px-[0.9vw] py-[0.8vh] flex items-center justify-center min-w-[4.8vw] rounded-br-[1.2vmin]"
+            >
+              <span class="font-bold text-[1.5vmin] leading-none uppercase whitespace-nowrap">
+                SO
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
