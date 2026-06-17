@@ -106,7 +106,7 @@ function getFiveShotIndicators(shooter) {
         alt="nation"
         class="h-[full] rounded-bl-lg"
       /><span class="flex items-center pl-[0.25vw] font-semibold text-[1rem] text-gray-900">{{
-        utils.parseClubData(shooter.club).club
+        utils.parseClubData(shooter.club).nation
       }}</span>
     </div>
 

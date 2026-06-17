@@ -110,7 +110,8 @@ const status = computed(() => {
     return `Final standings after ${highestMatchShotCount} shots`
   }
 
-  return `Standing${highestMatchShotCount > 1 ? 's' : ''} after ${highestMatchShotCount} shot${highestMatchShotCount > 1 ? 's' : ''}`
+  //return `Standing${highestMatchShotCount > 1 ? 's' : ''} after ${highestMatchShotCount} shot${highestMatchShotCount > 1 ? 's' : ''}`
+  return `Stillingen efter ${highestMatchShotCount} skud`
 })
 </script>
 

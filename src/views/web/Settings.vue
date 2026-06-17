@@ -240,7 +240,7 @@ const broadcastUrls = [
   { name: '10m Individual', path: '/broadcast/10m/individual/', type: 'individual' },
   { name: '10m Head-to-Head', path: '/broadcast/10m/individual/h2h/', type: 'h2h' },
   { name: '10m Scoreboard', path: '/broadcast/10m/individual/scoreboard/', type: 'scoreboard' },
-  { name: '10m Lower Third', path: '/broadcast/10m/individual/LowerThird/', type: 'lowerthird' },
+  { name: '10m Lower Third', path: '/broadcast/10m/individual/lowerthird/', type: 'lowerthird' },
   { name: '10m Mixed', path: '/broadcast/10m/mixed/', type: 'individual' },
   //{ name: '10m Team', path: '/broadcast/10m/team/', type: 'individual' },
   //{ name: '50m Individual', path: '/broadcast/50m/individual/', type: 'individual' },
