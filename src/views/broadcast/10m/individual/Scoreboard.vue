@@ -72,14 +72,17 @@ const participantsWithNotes = computed(() => {
     let notes = { type: 'none' }
 
     if (remainingShooters.length === 1 && remainingShooters[0] === participant) {
-      notes = { type: 'medal', medal: 'gold', rank: 1, text: 'GOLD' }
+      //notes = { type: 'medal', medal: 'gold', rank: 1, text: 'GOLD' }
+      notes = { type: 'medal', medal: 'gold', rank: 1, text: 'GULD' }
     } else if (isEliminated) {
       if (participant.rank === 2) {
-        notes = { type: 'medal', medal: 'silver', rank: 2, text: 'SILVER' }
+        //notes = { type: 'medal', medal: 'silver', rank: 2, text: 'SILVER' }
+        notes = { type: 'medal', medal: 'silver', rank: 2, text: 'SØLV' }
       } else if (participant.rank === 3) {
         notes = { type: 'medal', medal: 'bronze', rank: 3, text: 'BRONZE' }
       } else {
-        notes = { type: 'medal', medal: 'place', rank: participant.rank, text: 'PLACE' }
+        //notes = { type: 'medal', medal: 'place', rank: participant.rank, text: 'PLACE' }
+        notes = { type: 'medal', medal: 'place', rank: participant.rank, text: 'PLADS' }
       }
     } else if (hasT) {
       notes = { type: 'shootoff', text: 'SHOOT OFF' }
@@ -107,18 +110,19 @@ const status = computed(() => {
   const maxMatchSize = Math.max(...fetchedData.value.map((p) => p.matchSize))
 
   if (highestMatchShotCount === maxMatchSize) {
-    return `Final standings after ${highestMatchShotCount} shots`
+    //return `Final standings after ${highestMatchShotCount} shots`
+    return `Endelig stilling efter ${highestMatchShotCount} skud`
   }
 
   //return `Standing${highestMatchShotCount > 1 ? 's' : ''} after ${highestMatchShotCount} shot${highestMatchShotCount > 1 ? 's' : ''}`
-  return `Stillingen efter ${highestMatchShotCount} skud`
+  return `Stilling efter ${highestMatchShotCount} skud`
 })
 </script>
 
 <template>
   <div class="h-full w-full flex justify-center items-center">
     <div class="w-[60vw] h-[60vh] flex justify-center">
-      <div class="bg-gray-500/80 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
+      <div class="bg-gray-200/80 rounded-lg h-full w-full flex flex-col px-[2vw] py-[2vh]">
         <!-- Header section -->
         <div class="flex items-center w-full">
           <!-- LEFT: Logos -->
@@ -137,13 +141,13 @@ const status = computed(() => {
           <!-- CENTER: Title block -->
           <div class="flex-1 flex justify-between">
             <div class="flex flex-col text-left">
-              <span class="text-[3.0vmin] text-gray-300 font-bold truncate">
+              <span class="text-[3.0vmin] text-gray-900 font-bold truncate">
                 {{ title }}
               </span>
-              <span class="text-[2.5vmin] text-gray-200 font-medium truncate">
+              <span class="text-[2.5vmin] text-gray-900 font-medium truncate">
                 {{ discipline }}
               </span>
-              <span class="text-[2.0vmin] text-gray-200 font-normal">
+              <span class="text-[2.0vmin] text-gray-900 font-normal">
                 {{ status }}
               </span>
             </div>
@@ -154,7 +158,7 @@ const status = computed(() => {
           <div
             v-for="participant in participantsWithNotes"
             :key="participant.name"
-            class="grid grid-cols-[0.5fr_3fr_1fr_1fr] items-center gap-[2vmin] p-[1vmin] my-[0.3vmin] border-b border-gray-300 last:border-b-0"
+            class="grid grid-cols-[0.5fr_3fr_1fr_1fr] items-center gap-[2vmin] p-[1vmin] my-[0.3vmin] border-b border-gray-400 last:border-b-0"
           >
             <!-- Rank -->
             <div
@@ -204,7 +208,7 @@ const status = computed(() => {
                       'text-gray-500': participant.notes.rank >= 4,
                     }"
                   >
-                    {{ participant.notes.rank }}
+                    {{ participant.notes.rank }}.
                   </div>
                   <div
                     class="flex-1 text-center font-bold text-[2vmin] -ml-[1.5vmin]"
