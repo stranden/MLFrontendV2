@@ -24,7 +24,8 @@ function getShooterWidthClass(stage) {
     'fifth-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 4 shooters
     'sixth-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 3 shooters
     'seventh-single-shot-series': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // 2 shooters (final!)
-    'series-shootoff': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // shootoff
+    //'series-shootoff': 'w-[12vw] min-w-[12vw] max-w-[12vw]', // shootoff
+    'series-shootoff': 'w-[9.25vw] min-w-[9.25vw] max-w-[9.25vw]', // shootoff
   }
   return widthClasses[stage] || 'w-[10vw] min-w-[10vw] max-w-[10vw]'
 }
